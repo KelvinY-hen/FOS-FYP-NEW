@@ -1,0 +1,107 @@
+type CartFood @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  quantity: Int
+  subTotal: Float
+  cartID: ID! @index(name: "byCart")
+  foodID: ID! @index(name: "byFoods")
+}
+
+type OrderFood @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  quantity: Int
+  orderID: ID! @index(name: "byOrder")
+  subTotal: Float
+  foodsID: ID! @index(name: "byFoods")
+}
+
+type Cart @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userID: ID! @index(name: "byUser")
+  CartFoods: [CartFood] @hasMany(indexName: "byCart", fields: ["id"])
+  restaurantID: ID! @index(name: "byRestaurant")
+}
+
+type Order @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  OrderFoods: [OrderFood] @hasMany(indexName: "byOrder", fields: ["id"])
+  status: OrderStatus
+  userID: ID! @index(name: "byUser")
+  DateTime: AWSDateTime
+  totalPrice: Float
+  restaurantID: ID! @index(name: "byRestaurant")
+}
+
+type FoodIngredient @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  recipeQuantity: Float
+  ingredientID: ID! @index(name: "byIngredient")
+  foodsID: ID! @index(name: "byFoods")
+}
+
+enum OrderStatus {
+  RECEIVED
+  ACCEPTED
+  REJECTED
+  READY_FOR_PICKEDUP
+  COMPLETED
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  address: String
+  sub: String!
+  Orders: [Order] @hasMany(indexName: "byUser", fields: ["id"])
+  Carts: [Cart] @hasMany(indexName: "byUser", fields: ["id"])
+}
+
+type Restaurant @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Name: String!
+  Rating: Float
+  Categories: [Categories] @hasMany(indexName: "byRestaurant", fields: ["id"])
+  Payments: Payment @hasOne
+  Ingredients: [Ingredient] @hasMany(indexName: "byRestaurant", fields: ["id"])
+  adminSub: String
+  Foods: [Foods] @hasMany(indexName: "byRestaurant", fields: ["id"])
+  Carts: [Cart] @hasMany(indexName: "byRestaurant", fields: ["id"])
+  Orders: [Order] @hasMany(indexName: "byRestaurant", fields: ["id"])
+}
+
+type Payment @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  date: AWSDate!
+  time: AWSTime!
+}
+
+type Ingredient @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  quantity: Int!
+  restaurantID: ID! @index(name: "byRestaurant")
+  FoodIngredients: [FoodIngredient] @hasMany(indexName: "byIngredient", fields: ["id"])
+}
+
+type Categories @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  param: String
+  Foods: [Foods] @hasMany(indexName: "byCategories", fields: ["id"])
+  restaurantID: ID! @index(name: "byRestaurant")
+}
+
+type Foods @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  category: String
+  description: String
+  price: Float!
+  categoriesID: ID! @index(name: "byCategories")
+  discount: Float
+  Image: String
+  FoodIngredients: [FoodIngredient] @hasMany(indexName: "byFoods", fields: ["id"])
+  restaurantID: ID! @index(name: "byRestaurant")
+  CartFoods: [CartFood] @hasMany(indexName: "byFoods", fields: ["id"])
+  OrderFoods: [OrderFood] @hasMany(indexName: "byFoods", fields: ["id"])
+}
+ 

@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useReducer} from "react";
 import { initialState } from "./initialState";
-import CartProvider from "./CartProvider";
+import CartProvider from "./ContextProvider";
 
 export const StateContext = createContext();  
 

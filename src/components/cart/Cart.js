@@ -1,62 +1,161 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import Modal from "../UI/Modal";
 import classes from "./Cart.module.css";
 import CartItem from "./CartItem";
-import CartContext from "../../context/cart-context";
+import CartContext from "../../context/Context";
 import OrderDelivered from "./OrderDelivered";
 import { PaymentStripe } from "./PaymentForm";
-
+import { useCTX } from "../../context/Context";
+import { DataStore } from "aws-amplify";
+import { Foods } from "../../models";
+import dayjs from 'dayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 
 
 const Cart = (props) => {
-  const cartCtx = useContext(CartContext);
-  
+  const { cartContext, basketContext } = useCTX();
+
   const [showOrder, setShowOrder] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [foodser, setFoods] = useState([]);
 
-  const totalPrice = `$${cartCtx.totalPrice.toFixed(2)}`;
-  const hasItems = cartCtx.items.length > 0;
+  const totalPrice = `$${basketContext.totalPrice.toFixed(2)}`;
+  const hasItems = basketContext.basketDishes.length > 0;
 
-  const cartRemove = (id) => {
-    cartCtx.removeItem(id);
+  const cartRemove = async (item) => {
+    try {
+      const [foods] = await Promise.all([DataStore.query(Foods, item.foodID)]);
+
+      await basketContext.removeDish(foods);
+    } catch (error) {
+      // Handle the error, e.g., display an error message or log the error
+      console.error("An error occurred:", error);
+    }
   };
 
-  const cartAdd = (item) => {
-    cartCtx.addItem({ ...item, amount: 1 });
+  const cartAdd = async (item) => {
+    try {
+      const [foods] = await Promise.all([DataStore.query(Foods, item.foodID)]);
+
+      await basketContext.addDish(foods, 1);
+    } catch (error) {
+      // Handle the error, e.g., display an error message or log the error
+      console.error("An error occurred:", error);
+    }
   };
 
   const succesSet = () => {
     setSuccess(true);
-  }
+  };
 
   const orderHanlder = () => {
     setShowOrder(true);
   };
 
-  const cartItems = (
+  // useEffect(() => {
+  //   setOwner(false)
+  //   if (restaurant.id === id) {
+  //     setOwner(true);
+  //   } else{
+  //     setOwner(false);
+  //   }
+
+  //   DataStore.query(Restaurant, id).then(setThisRestaurant)
+  //   // basketContext.setRestaurantBasket(thisRestaurant)
+  //   DataStore.query(Categories, (c) => c?.restaurantID.eq(id)).then(setCategory)
+  //   DataStore.query(Foods, (f) => f?.restaurantID.eq(id)).then(setFood)
+
+  // },[restaurant, id]);
+
+  // async function fetchData() {
+  //   const fetchedData = await Promise.all(
+  //     basketContext.basketDishes.map(async (item) => {
+  //       const [foods] = await Promise.all([
+  //         DataStore.query(Foods, props.id)
+  //       ]);
+
+  //       return {
+  //         foods
+  //       };
+  //     })
+  //   );
+
+  //   return fetchedData;
+  // }
+
+  useEffect(() => {
+    DataStore.query(Foods, (f) =>
+      f.restaurantID.eq(basketContext.restaurantBasket?.id)
+    ).then(setFoods);
+  }, [basketContext.restaurantBasket?.id]);
+
+  // const cartItems = (
+  //   <ul className={classes["cart-items"]}>
+  //     {cartContext.items.map((item) => (
+  //       <CartItem
+  //         key={item.id}
+  //         name={item.name}
+  //         amount={item.amount}
+  //         price={item.price}
+  //         onRemove={cartRemove.bind(null, item.id)}
+  //         onAdd={cartAdd.bind(null, item)}
+  //       />
+  //     ))}
+  //   </ul>
+  // );
+
+  // const cartItems2 = (
+  //   <ul className={classes["cart-items"]}>
+  //     {basketContext.basketDishes.map((item) => {
+  //       // const foods = await DataStore.query(Foods, item.foodID);
+  //       const food = foodser.find((f) => f.id === item.foodID);
+  //       return (
+  //         <CartItem
+  //           key={item.id}
+  //           name="tempe"
+  //           amount={item.quantity}
+  //           price={item.quantity}
+  //           onRemove={cartRemove.bind(null, item.id)}
+  //           onAdd={cartAdd.bind(null, item)}
+  //         />
+  //       );
+  //     })}
+  //   </ul>
+  // );
+
+  const cartItems3 = (
     <ul className={classes["cart-items"]}>
-      {cartCtx.items.map((item) => (
-        <CartItem
-          key={item.id}
-          name={item.name}
-          amount={item.amount}
-          price={item.price}
-          onRemove={cartRemove.bind(null, item.id)}
-          onAdd={cartAdd.bind(null, item)}
-        />
-      ))}
+      {basketContext.basketDishes.map && 
+        basketContext.basketDishes.map((item) => (
+          <CartItem
+            key={item.id}
+            id={item.id}
+            amount={item.quantity}
+            onRemove={cartRemove.bind(null, item)}
+            onAdd={cartAdd.bind(null, item)}
+          />
+        ))}
     </ul>
   );
+
+  
 
   return (
     <Modal onClose={props.onClose}>
       {!showOrder ? (
         <>
-          {cartItems}
+          {cartItems3}
           <div className={classes.total}>
             <span>Total Price</span>
             <span>{totalPrice}</span>
+          </div>
+          <div>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker value={basketContext.dt} onChange={(newDt) => basketContext.changeDateTime(newDt)}/>
+            </LocalizationProvider>
           </div>
           <div className={classes.actions}>
             <button className={classes["button--alt"]} onClick={props.onClose}>
@@ -70,7 +169,7 @@ const Cart = (props) => {
           </div>
         </>
       ) : (
-          <PaymentStripe onClose={props.onClose}/>
+        <PaymentStripe onClose={props.onClose} />
       )}
     </Modal>
   );

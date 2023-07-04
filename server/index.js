@@ -13,20 +13,20 @@ var mysql = require("mysql");
 
 
 //create connection with AWS relational database service
-var con = mysql.createConnection({
-    host:"database-fos.ccqunrf6tzpd.ap-southeast-2.rds.amazonaws.com",
-    user:"admin",
-    port:"3306",
-    password:"admin12345",
-    database:"fosDatabase"
-});
+// var con = mysql.createConnection({
+//     host:"database-fos.ccqunrf6tzpd.ap-southeast-2.rds.amazonaws.com",
+//     user:"admin",
+//     port:"3306",
+//     password:"admin12345",
+//     database:"fosDatabase"
+// });
 
-con.connect(function(err) {
-    if (err) throw err;
-    else{
-        console.log("database connected")
-    }
-});
+// con.connect(function(err) {
+//     if (err) throw err;
+//     else{
+//         console.log("database connected")
+//     }
+// });
 
 app.get("/", (req, res) =>{
     res.json({ message: "Connected to RDS"});

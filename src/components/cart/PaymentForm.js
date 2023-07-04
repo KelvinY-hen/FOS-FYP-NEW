@@ -2,7 +2,7 @@ import React from 'react'
 import { CardElement, useElements, Elements, useStripe } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import axios from "axios" 
-import CartContext from '../../context/cart-context'
+import CartContext from '../../context/Context'
 import { useState, useContext } from 'react'
 import classes from "./PaymentForm.module.css";
 import Modal from '../UI/Modal'
@@ -42,8 +42,8 @@ const PaymentForm = (props) => {
   const [success, setSuccess] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
-  const cartCtx = useContext(CartContext);
-  const totalPrice = `${cartCtx.totalPrice.toFixed(2) * 100}`;
+  const {basketContext} = useContext(CartContext);
+  const totalPrice = `${basketContext.totalPrice.toFixed(2) * 100}`;
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -94,9 +94,9 @@ const PaymentForm = (props) => {
           </form>
         </>
       ) : (
+
           <OrderDelivered onClose={props.onClose}/>
       )}
     </Modal>
   )
 }
-
