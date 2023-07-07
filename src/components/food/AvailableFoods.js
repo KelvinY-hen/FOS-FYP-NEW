@@ -9,7 +9,6 @@ import { Foods, Categories, Restaurant } from "../../models";
 import { Button } from "@aws-amplify/ui-react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useCTX } from "../../context/Context";
-
 const AvailableFoods = () => {
   const { restaurant, basketContext } = useCTX();
   const { id } = useParams();
@@ -74,46 +73,51 @@ const AvailableFoods = () => {
     const dateObj = new Date(food.updatedAt);
     const formattedDate = dateObj.toLocaleDateString();
     const formattedTime = dateObj.toLocaleTimeString();
+    if (food.hide === true && owner === false) {
+      return null;
+    }
     if (filter === food.categoriesID) {
       return (
-          <motion.div
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -10, opacity: 0 }}
-            transition={{ duration: 1 }}
-          >
-            <Card>
-              <FoodItems
-                id={food.id}
-                key={food.id}
-                name={food.name}
-                category={food.category}
-                description={food.description}
-                price={food.price}
-              />
-              {owner && (
-                <div className="flex gap-2 pb-2 pl-2">
-                  <button
-                    type="button"
-                    className=" w-[25%] border-none outline-none bg-orange-500 p-1 rounded-lg text-lg text-white font-semibold"
-                    onClick={() => navigate(`/Food/${food.id} `)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="w-[25%]  border-none outline-none bg-sky-700 p-1 rounded-lg text-lg text-white font-semibold"
-                    onClick={() => navigate(`/Food/${food.id}/Ingredient`)}
-                  >
-                    ingredient
-                  </button>
-                  <p className="ml-auto pr-1 md:pr-7">
-                    Last updated on: {formattedDate}, {formattedTime}{" "}
-                  </p>
-                </div>
-              )}
-            </Card>
-          </motion.div>
+        <motion.div
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -10, opacity: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <Card>
+            <FoodItems
+              id={food.id}
+              key={food.id}
+              name={food.name}
+              image={food.Image}
+              category={food.category}
+              description={food.description}
+              price={food.price}
+              hide={food.hide}
+            />
+            {owner && (
+              <div className="flex gap-2 pb-2 pl-2">
+                <button
+                  type="button"
+                  className=" w-[25%] border-none outline-none bg-orange-500 p-1 rounded-lg text-lg text-white font-semibold"
+                  onClick={() => navigate(`/Food/${food.id} `)}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="w-[25%]  border-none outline-none bg-sky-700 p-1 rounded-lg text-lg text-white font-semibold"
+                  onClick={() => navigate(`/Food/${food.id}/Ingredient`)}
+                >
+                  ingredient
+                </button>
+                <p className="ml-auto pr-1 md:pr-7">
+                  Last updated on: {formattedDate}, {formattedTime}{" "}
+                </p>
+              </div>
+            )}
+          </Card>
+        </motion.div>
       );
     }
     return null;
@@ -135,7 +139,10 @@ const AvailableFoods = () => {
           {msg}
         </motion.p>
       )}
-
+      <div className="w-full flex flex-col items-center justify-center gap-5">
+        <h1 className=" font-bold text-5xl">{basketContext.restaurantBasket?.Name}</h1>
+        <h3 className=" text-orange-300">Contact Number    : {basketContext.restaurantBasket?.contactNumber}</h3>
+      </div>
       <div className=" w-full flex items-center justify-center lg:justify-center gap-2 py-6 overflow-x-clip hover:overflow-x-scroll md:no-scrollbar">
         {categoryList &&
           categoryList.map((category) => (

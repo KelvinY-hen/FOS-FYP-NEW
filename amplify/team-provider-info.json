@@ -17,6 +17,9 @@
       },
       "api": {
         "FOS": {}
+      },
+      "storage": {
+        "s3fosstorage27127593": {}
       }
     }
   }

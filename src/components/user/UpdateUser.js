@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
-import classes from "./UpdateRestaurant.module.css";
+import classes from "./UpdateUser.module.css";
 
 import {
   MdFastfood,
@@ -12,11 +12,11 @@ import {
   MdAbc
 } from "react-icons/md";
 import { useCTX } from "../../context/Context";
-import { Restaurant } from "../../models";
+import { User } from "../../models";
 import { DataStore,Auth } from "aws-amplify";
 import { useNavigate } from "react-router-dom";
 
-function UpdateRestaurant() {
+function UpdateUser() {
   
   const {cartContext, restaurant} = useCTX();
   const navigation = useNavigate();
@@ -32,24 +32,23 @@ function UpdateRestaurant() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [user,setUser] = useState();
+  const [dbUser,setDBUser] = useState();
   useEffect(() => {
     Auth.currentAuthenticatedUser({bypassCache: true}).then(setUser)
   }, [])
   const sub = user?.attributes?.sub;
 
   useEffect(() => {
-    DataStore.query(Restaurant, (r) => r.adminSub.eq(sub)).then((r) => setRestaurant(r[0]));
-    console.log("1")
+    DataStore.query(User, (u) => u.sub.eq(sub)).then((u) => setDBUser(u[0]));
   }, [sub])
 
   useEffect(() => {
-    console.log(adminRestaurant)
-    if (adminRestaurant) {
-        setName(adminRestaurant.Name);
-        setNumber(adminRestaurant.contactNumber)
+    if (dbUser) {
+        setName(dbUser.name);
+        setNumber(dbUser.contactNumber)
     }
     console.log(name)
-  }, [adminRestaurant]);
+  }, [dbUser]);
   
   // useEffect(() => {
     
@@ -86,9 +85,9 @@ function UpdateRestaurant() {
         }, 4000);
       } else {
         DataStore.save(
-          Restaurant.copyOf(adminRestaurant, (updated) =>
+          User.copyOf(dbUser, (updated) =>
             {
-              updated.Name = name
+              updated.name = name
               updated.contactNumber = number
             }
             )
@@ -196,4 +195,4 @@ return (
 );
 }
 
-export default UpdateRestaurant
+export default UpdateUser

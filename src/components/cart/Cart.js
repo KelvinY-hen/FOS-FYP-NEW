@@ -8,12 +8,10 @@ import { PaymentStripe } from "./PaymentForm";
 import { useCTX } from "../../context/Context";
 import { DataStore } from "aws-amplify";
 import { Foods } from "../../models";
-import dayjs from 'dayjs';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
-
+import dayjs from "dayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const Cart = (props) => {
   const { cartContext, basketContext } = useCTX();
@@ -21,6 +19,8 @@ const Cart = (props) => {
   const [showOrder, setShowOrder] = useState(false);
   const [success, setSuccess] = useState(false);
   const [foodser, setFoods] = useState([]);
+  const [amountIsValid, setAmountIsValid] = useState(true);
+
 
   const totalPrice = `$${basketContext.totalPrice.toFixed(2)}`;
   const hasItems = basketContext.basketDishes.length > 0;
@@ -52,6 +52,15 @@ const Cart = (props) => {
   };
 
   const orderHanlder = () => {
+
+    if (basketContext.dineIn &&
+       (basketContext.table < 1 ||
+       basketContext.table > 10)
+    ) {
+      setAmountIsValid(false);
+      return;
+    }
+    
     setShowOrder(true);
   };
 
@@ -128,7 +137,7 @@ const Cart = (props) => {
 
   const cartItems3 = (
     <ul className={classes["cart-items"]}>
-      {basketContext.basketDishes.map && 
+      {basketContext.basketDishes.map &&
         basketContext.basketDishes.map((item) => (
           <CartItem
             key={item.id}
@@ -140,6 +149,7 @@ const Cart = (props) => {
         ))}
     </ul>
   );
+
 
   
 
@@ -153,10 +163,41 @@ const Cart = (props) => {
             <span>{totalPrice}</span>
           </div>
           <div>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateTimePicker value={basketContext.dt} onChange={(newDt) => basketContext.changeDateTime(newDt)}/>
-            </LocalizationProvider>
+            <label htmlFor="toggle-order">Dine-in? :</label>
+            <input
+              type="checkbox"
+              id="toggle-order"
+              checked={basketContext.dineIn}
+              onChange={(e) => basketContext.setDineIn(e.target.checked)}
+              className="border border-solid border-1 border-orang-500"
+            />
           </div>
+          {!basketContext.dineIn ? (
+            <div>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <p className="mb-3">Enter your Pickup Time:</p>
+                <DateTimePicker
+                  value={basketContext.dt}
+                  onChange={(newDt) => basketContext.changeDateTime(newDt)}
+                />
+              </LocalizationProvider>
+            </div>
+          ) : (
+            <div>
+              <p>Enter your Table number:</p>
+              <input
+                className=" border border-solid border-1 border-gray-200 text-center"
+                type="number"
+                value={basketContext.table}
+                min={1}
+                max={20}
+                step={1}
+                onChange={(e) => basketContext.changeTable(parseInt(e.target.value))}
+              />
+              {!amountIsValid && <p className="text-1xl text-red-500">Please enter a valid table number (1-20).</p>}
+            </div>
+            
+          )}
           <div className={classes.actions}>
             <button className={classes["button--alt"]} onClick={props.onClose}>
               Close

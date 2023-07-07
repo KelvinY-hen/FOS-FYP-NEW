@@ -25,11 +25,13 @@ export default function UserUpdateForm(props) {
   } = props;
   const initialValues = {
     name: "",
-    address: "",
+    contactNumber: "",
     sub: "",
   };
   const [name, setName] = React.useState(initialValues.name);
-  const [address, setAddress] = React.useState(initialValues.address);
+  const [contactNumber, setContactNumber] = React.useState(
+    initialValues.contactNumber
+  );
   const [sub, setSub] = React.useState(initialValues.sub);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -37,7 +39,7 @@ export default function UserUpdateForm(props) {
       ? { ...initialValues, ...userRecord }
       : initialValues;
     setName(cleanValues.name);
-    setAddress(cleanValues.address);
+    setContactNumber(cleanValues.contactNumber);
     setSub(cleanValues.sub);
     setErrors({});
   };
@@ -54,7 +56,7 @@ export default function UserUpdateForm(props) {
   React.useEffect(resetStateValues, [userRecord]);
   const validations = {
     name: [{ type: "Required" }],
-    address: [],
+    contactNumber: [{ type: "Phone" }],
     sub: [{ type: "Required" }],
   };
   const runValidationTasks = async (
@@ -84,7 +86,7 @@ export default function UserUpdateForm(props) {
         event.preventDefault();
         let modelFields = {
           name,
-          address,
+          contactNumber,
           sub,
         };
         const validationResponses = await Promise.all(
@@ -142,7 +144,7 @@ export default function UserUpdateForm(props) {
           if (onChange) {
             const modelFields = {
               name: value,
-              address,
+              contactNumber,
               sub,
             };
             const result = onChange(modelFields);
@@ -159,30 +161,31 @@ export default function UserUpdateForm(props) {
         {...getOverrideProps(overrides, "name")}
       ></TextField>
       <TextField
-        label="Address"
+        label="Contact number"
         isRequired={false}
         isReadOnly={false}
-        value={address}
+        type="tel"
+        value={contactNumber}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
               name,
-              address: value,
+              contactNumber: value,
               sub,
             };
             const result = onChange(modelFields);
-            value = result?.address ?? value;
+            value = result?.contactNumber ?? value;
           }
-          if (errors.address?.hasError) {
-            runValidationTasks("address", value);
+          if (errors.contactNumber?.hasError) {
+            runValidationTasks("contactNumber", value);
           }
-          setAddress(value);
+          setContactNumber(value);
         }}
-        onBlur={() => runValidationTasks("address", address)}
-        errorMessage={errors.address?.errorMessage}
-        hasError={errors.address?.hasError}
-        {...getOverrideProps(overrides, "address")}
+        onBlur={() => runValidationTasks("contactNumber", contactNumber)}
+        errorMessage={errors.contactNumber?.errorMessage}
+        hasError={errors.contactNumber?.hasError}
+        {...getOverrideProps(overrides, "contactNumber")}
       ></TextField>
       <TextField
         label="Sub"
@@ -194,7 +197,7 @@ export default function UserUpdateForm(props) {
           if (onChange) {
             const modelFields = {
               name,
-              address,
+              contactNumber,
               sub: value,
             };
             const result = onChange(modelFields);

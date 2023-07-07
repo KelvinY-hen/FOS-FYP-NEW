@@ -14,14 +14,7 @@ export const schema = {
                     "name": "quantity",
                     "isArray": false,
                     "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "subTotal": {
-                    "name": "subTotal",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "cartID": {
@@ -112,7 +105,7 @@ export const schema = {
                     "name": "quantity",
                     "isArray": false,
                     "type": "Int",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "orderID": {
@@ -120,13 +113,6 @@ export const schema = {
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
-                    "attributes": []
-                },
-                "subTotal": {
-                    "name": "subTotal",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
                     "attributes": []
                 },
                 "foodsID": {
@@ -328,7 +314,7 @@ export const schema = {
                     "type": {
                         "enum": "OrderStatus"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "userID": {
@@ -349,7 +335,7 @@ export const schema = {
                     "name": "totalPrice",
                     "isArray": false,
                     "type": "Float",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "restaurantID": {
@@ -357,6 +343,22 @@ export const schema = {
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
+                    "attributes": []
+                },
+                "table": {
+                    "name": "table",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "Type": {
+                    "name": "Type",
+                    "isArray": false,
+                    "type": {
+                        "enum": "Type"
+                    },
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdAt": {
@@ -433,7 +435,7 @@ export const schema = {
                     "name": "recipeQuantity",
                     "isArray": false,
                     "type": "Float",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "ingredientID": {
@@ -527,10 +529,10 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "address": {
-                    "name": "address",
+                "contactNumber": {
+                    "name": "contactNumber",
                     "isArray": false,
-                    "type": "String",
+                    "type": "AWSPhone",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -632,13 +634,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "Rating": {
-                    "name": "Rating",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "Categories": {
                     "name": "Categories",
                     "isArray": true,
@@ -693,7 +688,7 @@ export const schema = {
                     "name": "adminSub",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "Foods": {
@@ -743,6 +738,13 @@ export const schema = {
                             "restaurantID"
                         ]
                     }
+                },
+                "contactNumber": {
+                    "name": "contactNumber",
+                    "isArray": false,
+                    "type": "AWSPhone",
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -873,7 +875,7 @@ export const schema = {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "quantity": {
@@ -1072,13 +1074,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "category": {
-                    "name": "category",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "description": {
                     "name": "description",
                     "isArray": false,
@@ -1098,13 +1093,6 @@ export const schema = {
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
-                    "attributes": []
-                },
-                "discount": {
-                    "name": "discount",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
                     "attributes": []
                 },
                 "Image": {
@@ -1169,6 +1157,13 @@ export const schema = {
                         ]
                     }
                 },
+                "hide": {
+                    "name": "hide",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1231,6 +1226,13 @@ export const schema = {
         }
     },
     "enums": {
+        "Type": {
+            "name": "Type",
+            "values": [
+                "DINEIN",
+                "PICKUP"
+            ]
+        },
         "OrderStatus": {
             "name": "OrderStatus",
             "values": [
@@ -1244,5 +1246,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.4.4",
-    "version": "a594f640baf6b3cfe88d0b89f05f491f"
+    "version": "609ac0a2ae50f8f6cec6b11297f30b91"
 };

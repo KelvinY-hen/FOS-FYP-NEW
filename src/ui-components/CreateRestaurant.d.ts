@@ -7,38 +7,36 @@
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { User } from "../models";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type UserUpdateFormInputValues = {
-    name?: string;
+export declare type CreateRestaurantInputValues = {
+    Name?: string;
+    adminSub?: string;
     contactNumber?: string;
-    sub?: string;
 };
-export declare type UserUpdateFormValidationValues = {
-    name?: ValidationFunction<string>;
+export declare type CreateRestaurantValidationValues = {
+    Name?: ValidationFunction<string>;
+    adminSub?: ValidationFunction<string>;
     contactNumber?: ValidationFunction<string>;
-    sub?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type UserUpdateFormOverridesProps = {
-    UserUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    name?: PrimitiveOverrideProps<TextFieldProps>;
+export declare type CreateRestaurantOverridesProps = {
+    CreateRestaurantGrid?: PrimitiveOverrideProps<GridProps>;
+    Name?: PrimitiveOverrideProps<TextFieldProps>;
+    adminSub?: PrimitiveOverrideProps<TextFieldProps>;
     contactNumber?: PrimitiveOverrideProps<TextFieldProps>;
-    sub?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type UserUpdateFormProps = React.PropsWithChildren<{
-    overrides?: UserUpdateFormOverridesProps | undefined | null;
+export declare type CreateRestaurantProps = React.PropsWithChildren<{
+    overrides?: CreateRestaurantOverridesProps | undefined | null;
 } & {
-    id?: string;
-    user?: User;
-    onSubmit?: (fields: UserUpdateFormInputValues) => UserUpdateFormInputValues;
-    onSuccess?: (fields: UserUpdateFormInputValues) => void;
-    onError?: (fields: UserUpdateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: UserUpdateFormInputValues) => UserUpdateFormInputValues;
-    onValidate?: UserUpdateFormValidationValues;
+    clearOnSuccess?: boolean;
+    onSubmit?: (fields: CreateRestaurantInputValues) => CreateRestaurantInputValues;
+    onSuccess?: (fields: CreateRestaurantInputValues) => void;
+    onError?: (fields: CreateRestaurantInputValues, errorMessage: string) => void;
+    onChange?: (fields: CreateRestaurantInputValues) => CreateRestaurantInputValues;
+    onValidate?: CreateRestaurantValidationValues;
 } & React.CSSProperties>;
-export default function UserUpdateForm(props: UserUpdateFormProps): React.ReactElement;
+export default function CreateRestaurant(props: CreateRestaurantProps): React.ReactElement;

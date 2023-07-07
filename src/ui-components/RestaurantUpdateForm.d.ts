@@ -15,20 +15,20 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type RestaurantUpdateFormInputValues = {
     Name?: string;
-    Rating?: number;
     adminSub?: string;
+    contactNumber?: string;
 };
 export declare type RestaurantUpdateFormValidationValues = {
     Name?: ValidationFunction<string>;
-    Rating?: ValidationFunction<number>;
     adminSub?: ValidationFunction<string>;
+    contactNumber?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type RestaurantUpdateFormOverridesProps = {
     RestaurantUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
     Name?: PrimitiveOverrideProps<TextFieldProps>;
-    Rating?: PrimitiveOverrideProps<TextFieldProps>;
     adminSub?: PrimitiveOverrideProps<TextFieldProps>;
+    contactNumber?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type RestaurantUpdateFormProps = React.PropsWithChildren<{
     overrides?: RestaurantUpdateFormOverridesProps | undefined | null;

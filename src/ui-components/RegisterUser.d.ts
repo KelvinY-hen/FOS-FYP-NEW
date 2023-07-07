@@ -7,38 +7,36 @@
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { User } from "../models";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
-export declare type UserUpdateFormInputValues = {
+export declare type RegisterUserInputValues = {
     name?: string;
     contactNumber?: string;
     sub?: string;
 };
-export declare type UserUpdateFormValidationValues = {
+export declare type RegisterUserValidationValues = {
     name?: ValidationFunction<string>;
     contactNumber?: ValidationFunction<string>;
     sub?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
-export declare type UserUpdateFormOverridesProps = {
-    UserUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
+export declare type RegisterUserOverridesProps = {
+    RegisterUserGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     contactNumber?: PrimitiveOverrideProps<TextFieldProps>;
     sub?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
-export declare type UserUpdateFormProps = React.PropsWithChildren<{
-    overrides?: UserUpdateFormOverridesProps | undefined | null;
+export declare type RegisterUserProps = React.PropsWithChildren<{
+    overrides?: RegisterUserOverridesProps | undefined | null;
 } & {
-    id?: string;
-    user?: User;
-    onSubmit?: (fields: UserUpdateFormInputValues) => UserUpdateFormInputValues;
-    onSuccess?: (fields: UserUpdateFormInputValues) => void;
-    onError?: (fields: UserUpdateFormInputValues, errorMessage: string) => void;
-    onChange?: (fields: UserUpdateFormInputValues) => UserUpdateFormInputValues;
-    onValidate?: UserUpdateFormValidationValues;
+    clearOnSuccess?: boolean;
+    onSubmit?: (fields: RegisterUserInputValues) => RegisterUserInputValues;
+    onSuccess?: (fields: RegisterUserInputValues) => void;
+    onError?: (fields: RegisterUserInputValues, errorMessage: string) => void;
+    onChange?: (fields: RegisterUserInputValues) => RegisterUserInputValues;
+    onValidate?: RegisterUserValidationValues;
 } & React.CSSProperties>;
-export default function UserUpdateForm(props: UserUpdateFormProps): React.ReactElement;
+export default function RegisterUser(props: RegisterUserProps): React.ReactElement;

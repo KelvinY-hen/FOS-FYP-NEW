@@ -2,6 +2,11 @@
 import { initSchema } from '@aws-amplify/datastore';
 import { schema } from './schema';
 
+const Type = {
+  "DINEIN": "DINEIN",
+  "PICKUP": "PICKUP"
+};
+
 const OrderStatus = {
   "RECEIVED": "RECEIVED",
   "ACCEPTED": "ACCEPTED",
@@ -24,5 +29,6 @@ export {
   Ingredient,
   Categories,
   Foods,
+  Type,
   OrderStatus
 };

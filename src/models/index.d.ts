@@ -2,6 +2,11 @@ import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
 
+export enum Type {
+  DINEIN = "DINEIN",
+  PICKUP = "PICKUP"
+}
+
 export enum OrderStatus {
   RECEIVED = "RECEIVED",
   ACCEPTED = "ACCEPTED",
@@ -18,8 +23,7 @@ type EagerCartFood = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly quantity?: number | null;
-  readonly subTotal?: number | null;
+  readonly quantity: number;
   readonly cartID: string;
   readonly foodID: string;
   readonly createdAt?: string | null;
@@ -32,8 +36,7 @@ type LazyCartFood = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly quantity?: number | null;
-  readonly subTotal?: number | null;
+  readonly quantity: number;
   readonly cartID: string;
   readonly foodID: string;
   readonly createdAt?: string | null;
@@ -52,9 +55,8 @@ type EagerOrderFood = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly quantity?: number | null;
+  readonly quantity: number;
   readonly orderID: string;
-  readonly subTotal?: number | null;
   readonly foodsID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -66,9 +68,8 @@ type LazyOrderFood = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly quantity?: number | null;
+  readonly quantity: number;
   readonly orderID: string;
-  readonly subTotal?: number | null;
   readonly foodsID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -119,11 +120,13 @@ type EagerOrder = {
   };
   readonly id: string;
   readonly OrderFoods?: (OrderFood | null)[] | null;
-  readonly status?: OrderStatus | keyof typeof OrderStatus | null;
+  readonly status: OrderStatus | keyof typeof OrderStatus;
   readonly userID: string;
   readonly DateTime?: string | null;
-  readonly totalPrice?: number | null;
+  readonly totalPrice: number;
   readonly restaurantID: string;
+  readonly table?: number | null;
+  readonly Type?: Type | keyof typeof Type | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -135,11 +138,13 @@ type LazyOrder = {
   };
   readonly id: string;
   readonly OrderFoods: AsyncCollection<OrderFood>;
-  readonly status?: OrderStatus | keyof typeof OrderStatus | null;
+  readonly status: OrderStatus | keyof typeof OrderStatus;
   readonly userID: string;
   readonly DateTime?: string | null;
-  readonly totalPrice?: number | null;
+  readonly totalPrice: number;
   readonly restaurantID: string;
+  readonly table?: number | null;
+  readonly Type?: Type | keyof typeof Type | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -156,7 +161,7 @@ type EagerFoodIngredient = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly recipeQuantity?: number | null;
+  readonly recipeQuantity: number;
   readonly ingredientID: string;
   readonly foodsID: string;
   readonly createdAt?: string | null;
@@ -169,7 +174,7 @@ type LazyFoodIngredient = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly recipeQuantity?: number | null;
+  readonly recipeQuantity: number;
   readonly ingredientID: string;
   readonly foodsID: string;
   readonly createdAt?: string | null;
@@ -189,7 +194,7 @@ type EagerUser = {
   };
   readonly id: string;
   readonly name: string;
-  readonly address?: string | null;
+  readonly contactNumber?: string | null;
   readonly sub: string;
   readonly Orders?: (Order | null)[] | null;
   readonly Carts?: (Cart | null)[] | null;
@@ -204,7 +209,7 @@ type LazyUser = {
   };
   readonly id: string;
   readonly name: string;
-  readonly address?: string | null;
+  readonly contactNumber?: string | null;
   readonly sub: string;
   readonly Orders: AsyncCollection<Order>;
   readonly Carts: AsyncCollection<Cart>;
@@ -225,14 +230,14 @@ type EagerRestaurant = {
   };
   readonly id: string;
   readonly Name: string;
-  readonly Rating?: number | null;
   readonly Categories?: (Categories | null)[] | null;
   readonly Payments?: Payment | null;
   readonly Ingredients?: (Ingredient | null)[] | null;
-  readonly adminSub?: string | null;
+  readonly adminSub: string;
   readonly Foods?: (Foods | null)[] | null;
   readonly Carts?: (Cart | null)[] | null;
   readonly Orders?: (Order | null)[] | null;
+  readonly contactNumber?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly restaurantPaymentsId?: string | null;
@@ -245,14 +250,14 @@ type LazyRestaurant = {
   };
   readonly id: string;
   readonly Name: string;
-  readonly Rating?: number | null;
   readonly Categories: AsyncCollection<Categories>;
   readonly Payments: AsyncItem<Payment | undefined>;
   readonly Ingredients: AsyncCollection<Ingredient>;
-  readonly adminSub?: string | null;
+  readonly adminSub: string;
   readonly Foods: AsyncCollection<Foods>;
   readonly Carts: AsyncCollection<Cart>;
   readonly Orders: AsyncCollection<Order>;
+  readonly contactNumber?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly restaurantPaymentsId?: string | null;
@@ -300,7 +305,7 @@ type EagerIngredient = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly name?: string | null;
+  readonly name: string;
   readonly quantity: number;
   readonly restaurantID: string;
   readonly FoodIngredients?: (FoodIngredient | null)[] | null;
@@ -314,7 +319,7 @@ type LazyIngredient = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly name?: string | null;
+  readonly name: string;
   readonly quantity: number;
   readonly restaurantID: string;
   readonly FoodIngredients: AsyncCollection<FoodIngredient>;
@@ -369,16 +374,15 @@ type EagerFoods = {
   };
   readonly id: string;
   readonly name: string;
-  readonly category?: string | null;
   readonly description?: string | null;
   readonly price: number;
   readonly categoriesID: string;
-  readonly discount?: number | null;
   readonly Image?: string | null;
   readonly FoodIngredients?: (FoodIngredient | null)[] | null;
   readonly restaurantID: string;
   readonly CartFoods?: (CartFood | null)[] | null;
   readonly OrderFoods?: (OrderFood | null)[] | null;
+  readonly hide?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -390,16 +394,15 @@ type LazyFoods = {
   };
   readonly id: string;
   readonly name: string;
-  readonly category?: string | null;
   readonly description?: string | null;
   readonly price: number;
   readonly categoriesID: string;
-  readonly discount?: number | null;
   readonly Image?: string | null;
   readonly FoodIngredients: AsyncCollection<FoodIngredient>;
   readonly restaurantID: string;
   readonly CartFoods: AsyncCollection<CartFood>;
   readonly OrderFoods: AsyncCollection<OrderFood>;
+  readonly hide?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

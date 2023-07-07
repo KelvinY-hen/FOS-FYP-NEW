@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import { DataStore } from "aws-amplify";
-import { Order, OrderStatus } from "../../models";
+import { Order, OrderStatus, Type } from "../../models";
 import { useCTX } from "../../context/Context";
 import { MotionConfig } from "framer-motion";
 
@@ -55,7 +55,38 @@ const OrdersList = () => {
     return <Tag color={statusToColor[orderStatus]}>{orderStatus}</Tag>;
   };
 
+  const renderType = (type) => {
+    const statusToColor = {
+      [Type.DINEIN]: "green",
+      [Type.PICKUP]: "blue",
+    };
+
+    return <Tag color={statusToColor[type]}>{type}</Tag>;
+  };
+
   const tableColumns = [
+    {
+      title: "Type",
+      dataIndex: "Type",
+      key: "Type",
+      render: renderType,
+      filters: [
+        {
+          text: "DINE IN",
+          value: "DINEIN",
+        },
+        {
+          text: "PICK UP",
+          value: "PICKUP",  
+        },
+      ],
+      onFilter: (value, record) => record.Type.indexOf(value) === 0,
+    },
+    {
+      title: "Table Number",
+      dataIndex: "table",
+      key: "table"
+    },
     {
       title: "Order ID",
       dataIndex: "id",
@@ -65,6 +96,8 @@ const OrdersList = () => {
       title: "Created at",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (dt) => new Date(dt).toLocaleString(),
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
     },
     {
       title: "Ordered for",

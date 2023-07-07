@@ -3,7 +3,7 @@ import { Card, Table, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
 
 import { DataStore, Auth } from "aws-amplify";
-import { Order, OrderStatus } from "../../models";
+import { Order, OrderStatus, Type } from "../../models";
 import { useCTX } from "../../context/Context";
 import { motion } from "framer-motion";
 
@@ -11,6 +11,7 @@ const UserOrdersList = () => {
   const [orders, setOrders] = useState([]);
   const { restaurant } = useCTX();
   const [user, setUser] = useState();
+  
   useEffect(() => {
     Auth.currentAuthenticatedUser({ bypassCache: true }).then(setUser);
   }, []);
@@ -58,8 +59,38 @@ const UserOrdersList = () => {
 
     return <Tag color={statusToColor[orderStatus]}>{orderStatus}</Tag>;
   };
+  const renderType = (type) => {
+    const statusToColor = {
+      [Type.DINEIN]: "green",
+      [Type.PICKUP]: "blue",
+    };
+
+    return <Tag color={statusToColor[type]}>{type}</Tag>;
+  };
 
   const tableColumns = [
+    {
+      title: "Type",
+      dataIndex: "Type",
+      key: "Type",
+      render: renderType,
+      filters: [
+        {
+          text: "DINE IN",
+          value: "DINEIN",
+        },
+        {
+          text: "PICK UP",
+          value: "PICKUP",
+        },
+      ],
+      onFilter: (value, record) => record.Type.indexOf(value) === 0,
+    },
+    {
+      title: "Table Number",
+      dataIndex: "table",
+      key: "table",
+    },
     {
       title: "Order ID",
       dataIndex: "id",
@@ -69,6 +100,14 @@ const UserOrdersList = () => {
       title: "Created at",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (dt) => new Date(dt).toLocaleString(),
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+    },
+    {
+      title: "Ordered for",
+      dataIndex: "DateTime",
+      key: "DateTime",
+      render: (dt) => new Date(dt).toLocaleString(),
     },
     {
       title: "Price",
@@ -81,6 +120,29 @@ const UserOrdersList = () => {
       dataIndex: "status",
       key: "status",
       render: renderOrderStatus,
+      filters: [
+        {
+          text: "RECEIVED",
+          value: "RECEIVED",
+        },
+        {
+          text: "ACCEPTED",
+          value: "ACCEPTED",
+        },
+        {
+          text: "REJECTED",
+          value: "REJECTED",
+        },
+        {
+          text: "READY_FOR_PICKEDUP",
+          value: "READY_FOR_PICKEDUP",
+        },
+        {
+          text: "COMPLETED",
+          value: "COMPLETED",
+        },
+      ],
+      onFilter: (value, record) => record.status.indexOf(value) === 0,
     },
   ];
 

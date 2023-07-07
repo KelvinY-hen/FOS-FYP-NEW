@@ -12,79 +12,24 @@ import {
   Order,
   OrderFood,
   Categories,
+  User,
 } from "../models/index.js";
 import {
   PredicateAll,
   Predicates,
 } from "@aws-amplify/datastore/lib-esm/predicates/index.js";
 import dayjs from "dayjs";
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-// const cartReducer = (state, action) => {
-//   if (action.type === "ADD") {
-//     const updatedTotalPrice = state.totalPrice + action.item.price * action.item.amount;
-
-//     const existingCartItemIndex = state.items.findIndex(
-//       (item) => item.id === action.item.id
-//     );
-//     const existingCartItem = state.items[existingCartItemIndex];
-//     let updatedItems;
-
-//     if (existingCartItem) {
-//       const updatedItem = {
-//         ...existingCartItem,
-//         amount: existingCartItem.amount + action.item.amount,
-//       };
-//       updatedItems = [...state.items];
-//       updatedItems[existingCartItemIndex] = updatedItem;
-//     } else {
-//       updatedItems = state.items.concat(action.item);
-//     }
-
-//     return {
-//       items: updatedItems,
-//       totalPrice: updatedTotalPrice,
-//     };
-//   }
-
-//   if (action.type === "REMOVE") {
-//     const existingCartItemIndex = state.items.findIndex(
-//       (item) => item.id === action.id
-//     );
-//     const existingItem = state.items[existingCartItemIndex];
-//     const updatedtotalprice = state.totalPrice - existingItem.price;
-//     let updatedItems;
-//     if (existingItem.amount === 1) {
-//       updatedItems = state.items.filter((item) => item.id !== action.id);
-//     } else {
-//       const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
-//       updatedItems = [...state.items];
-//       updatedItems[existingCartItemIndex] = updatedItem;
-//     }
-
-//     return {
-//       items: updatedItems,
-//       totalPrice: updatedtotalprice,
-//     };
-//   }
-
-//   if (action.type === "CLEAR") {
-//     return {
-//       items: [],
-//       totalPrice: 0,
-//     };
-//   }
-
-//   return defaultCartState;
-// };
-
 const ContextProvider = (props) => {
   const [user, setUser] = useState();
+  const [dbUser, setDBUser] = useState();
   const [restaurant, setRestaurant] = useState([]);
+
   const sub = user?.attributes?.sub;
 
   const [restaurantBasket, setRestaurantBasket] = useState();
@@ -92,6 +37,8 @@ const ContextProvider = (props) => {
   const [basketDishes, setBasketDishes] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [dt, setDt] = useState(dayjs());
+  const [table, setTable] = useState(null);
+  const [dineIn, setDineIn] = useState(false);
 
   useEffect(() => {
     Auth.currentAuthenticatedUser({ bypassCache: true }).then(setUser);
@@ -99,6 +46,31 @@ const ContextProvider = (props) => {
 
   /// Change Context for Account Sub when Changing Account
   useEffect(() => {
+    const createUser = async () => {
+      try {
+        const user = await DataStore.save(
+          new User({
+            name: "not Entered",
+            contactNumber: null,
+            sub: sub,
+          })
+        );
+        setDBUser(user);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    const checkUser = async () => {
+      const tempUser = await DataStore.query(User, (u) => u.sub.eq(sub));
+
+      if (tempUser) {
+        setDBUser(tempUser);
+      } else {
+        await createUser();
+      }
+    };
+
     if (!sub) {
       return;
     }
@@ -106,6 +78,8 @@ const ContextProvider = (props) => {
     DataStore.query(Restaurant, (r) => r.adminSub.eq(sub)).then((restaurants) =>
       setRestaurant(restaurants[0])
     );
+
+    checkUser();
   }, [sub]);
 
   useEffect(() => {
@@ -139,6 +113,7 @@ const ContextProvider = (props) => {
         ).then((baskets) => setBasket(baskets[0]));
     }
     setDt(dayjs());
+    setTable(null);
   }, [user, restaurantBasket]);
 
   useEffect(() => {
@@ -220,19 +195,20 @@ const ContextProvider = (props) => {
   };
 
   const changeDateTime = (newDt) => {
-    setDt(newDt)
-  }
+    setTable(null);
+    setDt(newDt);
+  };
+
+  const changeTable = (table) => {
+    setTable(table);
+    setDt(dayjs());
+  };
+
+  console.log(dbUser);
 
   const ClearDishFromBasket = async (dish, quantity) => {
     // get the existing basket or create a new one
-    let theBasket = basket || (await createNewBasket());
-
-    // create a BasketDish item and save to Datastore
-    const newDish = await DataStore.save(
-      new CartFood({ subTotal: quantity, Dish: dish, basketID: theBasket.id })
-    );
-
-    setBasketDishes([...basketDishes, newDish]);
+    setBasketDishes([]);
   };
 
   const createNewBasket = async () => {
@@ -269,16 +245,24 @@ const ContextProvider = (props) => {
   const createOrder = async () => {
     // create the order
     console.log("order memek");
-    console.log(dt)
-    const awsDateTime = dt.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-    console.log(awsDateTime)
+    console.log(dt);
+    const awsDateTime = dt.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+    console.log(awsDateTime);
+    var type = "DINEIN";
+    console.log(type);
+    if (dineIn === false) {
+      type = "PICKUP";
+      setTable(0);
+    }
     const newOrder = await DataStore.save(
       new Order({
         userID: sub,
         restaurantID: restaurantBasket.id,
         status: "RECEIVED",
         totalPrice: totalPrice,
-        DateTime: awsDateTime .toString()
+        DateTime: awsDateTime.toString(),
+        table: table,
+        Type: type,
       })
     );
     console.log("memek2");
@@ -305,6 +289,7 @@ const ContextProvider = (props) => {
     return newOrder;
   };
 
+  console.log(restaurantBasket);
   const cartContext = {
     // items: cartState.items,
     // totalPrice: cartState.totalPrice,
@@ -321,9 +306,14 @@ const ContextProvider = (props) => {
     totalPrice,
     addDish: addDishToBasket,
     removeDish: removeDishFromBasket,
+    clearDish: ClearDishFromBasket,
     createOrder: createOrder,
     changeDateTime,
-    dt
+    dt,
+    table,
+    changeTable,
+    dineIn,
+    setDineIn,
   };
 
   const ContextValue = {

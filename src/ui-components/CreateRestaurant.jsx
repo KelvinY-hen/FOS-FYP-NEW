@@ -6,15 +6,14 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import { Button, Flex, Grid, TextField, useTheme } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
 import { Restaurant } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function RestaurantUpdateForm(props) {
+export default function CreateRestaurant(props) {
   const {
-    id: idProp,
-    restaurant: restaurantModelProp,
+    clearOnSuccess = true,
     onSuccess,
     onError,
     onSubmit,
@@ -23,6 +22,7 @@ export default function RestaurantUpdateForm(props) {
     overrides,
     ...rest
   } = props;
+  const { tokens } = useTheme();
   const initialValues = {
     Name: "",
     adminSub: "",
@@ -35,26 +35,11 @@ export default function RestaurantUpdateForm(props) {
   );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = restaurantRecord
-      ? { ...initialValues, ...restaurantRecord }
-      : initialValues;
-    setName(cleanValues.Name);
-    setAdminSub(cleanValues.adminSub);
-    setContactNumber(cleanValues.contactNumber);
+    setName(initialValues.Name);
+    setAdminSub(initialValues.adminSub);
+    setContactNumber(initialValues.contactNumber);
     setErrors({});
   };
-  const [restaurantRecord, setRestaurantRecord] =
-    React.useState(restaurantModelProp);
-  React.useEffect(() => {
-    const queryData = async () => {
-      const record = idProp
-        ? await DataStore.query(Restaurant, idProp)
-        : restaurantModelProp;
-      setRestaurantRecord(record);
-    };
-    queryData();
-  }, [idProp, restaurantModelProp]);
-  React.useEffect(resetStateValues, [restaurantRecord]);
   const validations = {
     Name: [{ type: "Required" }],
     adminSub: [{ type: "Required" }],
@@ -82,7 +67,7 @@ export default function RestaurantUpdateForm(props) {
       as="form"
       rowGap="15px"
       columnGap="15px"
-      padding="20px"
+      padding={tokens.space.medium.value}
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
@@ -118,13 +103,12 @@ export default function RestaurantUpdateForm(props) {
               modelFields[key] = undefined;
             }
           });
-          await DataStore.save(
-            Restaurant.copyOf(restaurantRecord, (updated) => {
-              Object.assign(updated, modelFields);
-            })
-          );
+          await DataStore.save(new Restaurant(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
+          }
+          if (clearOnSuccess) {
+            resetStateValues();
           }
         } catch (err) {
           if (onError) {
@@ -132,7 +116,7 @@ export default function RestaurantUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "RestaurantUpdateForm")}
+      {...getOverrideProps(overrides, "CreateRestaurant")}
       {...rest}
     >
       <TextField
@@ -219,14 +203,13 @@ export default function RestaurantUpdateForm(props) {
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Reset"
+          children="Clear"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || restaurantModelProp)}
-          {...getOverrideProps(overrides, "ResetButton")}
+          {...getOverrideProps(overrides, "ClearButton")}
         ></Button>
         <Flex
           gap="15px"
@@ -236,10 +219,7 @@ export default function RestaurantUpdateForm(props) {
             children="Submit"
             type="submit"
             variation="primary"
-            isDisabled={
-              !(idProp || restaurantModelProp) ||
-              Object.values(errors).some((e) => e?.hasError)
-            }
+            isDisabled={Object.values(errors).some((e) => e?.hasError)}
             {...getOverrideProps(overrides, "SubmitButton")}
           ></Button>
         </Flex>

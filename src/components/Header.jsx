@@ -72,6 +72,14 @@ const Header = (props) => {
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.5 }}
                   className="text-base hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer"
+                  onClick={() => NavigatePages("User/Edit")}
+                >
+                  Update Profile{" "}
+                </motion.li>
+                <motion.li
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.5 }}
+                  className="text-base hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer"
                   onClick={() => NavigatePages("Food/Create")}
                 >
                   New Food{" "}
@@ -126,14 +134,11 @@ const Header = (props) => {
 
           <motion.div
             whileHover={{ scale: 1.2 }}
-            whileTap={{scale: 0.5}}
+            whileTap={{ scale: 0.5 }}
             onClick={props.onShowCart}
             className="relative flext item-center justify-center"
           >
-            <BsCart
-              className=" hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer text-2xl "
-              
-            />
+            <BsCart className=" hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer text-2xl " />
             <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-red-500 p-2   flex items-center justify-center">
               <p className=" text-xs text-white font-semibold p-3">
                 {numberOfBasketItems}
@@ -198,6 +203,14 @@ const Header = (props) => {
                 </li>
                 {restaurant && (
                   <>
+                    <li
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.5 }}
+                      className="text-base text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer hover:bg-slate-100 px-4 py-2"
+                      onClick={() => NavigatePages("User/Edit")}
+                    >
+                      Update Profile{" "}
+                    </li>
                     <li
                       className="text-base text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer hover:bg-slate-100 px-4 py-2"
                       onClick={() => NavigatePages("Food/Create")}

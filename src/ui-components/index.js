@@ -5,9 +5,9 @@
  **************************************************************************/
 
 export { default as studioTheme } from "./studioTheme";
-export { default as UserCreateForm } from "./UserCreateForm";
+export { default as CreateRestaurant } from "./CreateRestaurant";
+export { default as RegisterUser } from "./RegisterUser";
 export { default as UserUpdateForm } from "./UserUpdateForm";
-export { default as RestaurantCreateForm } from "./RestaurantCreateForm";
 export { default as RestaurantUpdateForm } from "./RestaurantUpdateForm";
 export { default as PaymentCreateForm } from "./PaymentCreateForm";
 export { default as PaymentUpdateForm } from "./PaymentUpdateForm";

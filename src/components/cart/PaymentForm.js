@@ -45,6 +45,10 @@ const PaymentForm = (props) => {
   const {basketContext} = useContext(CartContext);
   const totalPrice = `${basketContext.totalPrice.toFixed(2) * 100}`;
 
+  const onCreateOrder = async () => {
+    const newOrder = await basketContext.createOrder();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const {error, paymentMethod} = await stripe.createPaymentMethod({
@@ -66,11 +70,12 @@ const PaymentForm = (props) => {
 
       if (response.data.success) {
         console.log("succesful payment")
+        await onCreateOrder();
         succesSet();
       }
     }
     catch(error) {
-      console.log("tempe2")
+      console.log(error)
     }
   } else {
     console.log("tempe")  }

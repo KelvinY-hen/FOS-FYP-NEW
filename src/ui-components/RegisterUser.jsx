@@ -8,13 +8,12 @@
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { Restaurant } from "../models";
+import { User } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function RestaurantUpdateForm(props) {
+export default function RegisterUser(props) {
   const {
-    id: idProp,
-    restaurant: restaurantModelProp,
+    clearOnSuccess = true,
     onSuccess,
     onError,
     onSubmit,
@@ -24,41 +23,26 @@ export default function RestaurantUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    Name: "",
-    adminSub: "",
+    name: "",
     contactNumber: "",
+    sub: "",
   };
-  const [Name, setName] = React.useState(initialValues.Name);
-  const [adminSub, setAdminSub] = React.useState(initialValues.adminSub);
+  const [name, setName] = React.useState(initialValues.name);
   const [contactNumber, setContactNumber] = React.useState(
     initialValues.contactNumber
   );
+  const [sub, setSub] = React.useState(initialValues.sub);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = restaurantRecord
-      ? { ...initialValues, ...restaurantRecord }
-      : initialValues;
-    setName(cleanValues.Name);
-    setAdminSub(cleanValues.adminSub);
-    setContactNumber(cleanValues.contactNumber);
+    setName(initialValues.name);
+    setContactNumber(initialValues.contactNumber);
+    setSub(initialValues.sub);
     setErrors({});
   };
-  const [restaurantRecord, setRestaurantRecord] =
-    React.useState(restaurantModelProp);
-  React.useEffect(() => {
-    const queryData = async () => {
-      const record = idProp
-        ? await DataStore.query(Restaurant, idProp)
-        : restaurantModelProp;
-      setRestaurantRecord(record);
-    };
-    queryData();
-  }, [idProp, restaurantModelProp]);
-  React.useEffect(resetStateValues, [restaurantRecord]);
   const validations = {
-    Name: [{ type: "Required" }],
-    adminSub: [{ type: "Required" }],
+    name: [{ type: "Required" }],
     contactNumber: [{ type: "Phone" }],
+    sub: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -86,9 +70,9 @@ export default function RestaurantUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          Name,
-          adminSub,
+          name,
           contactNumber,
+          sub,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -118,13 +102,12 @@ export default function RestaurantUpdateForm(props) {
               modelFields[key] = undefined;
             }
           });
-          await DataStore.save(
-            Restaurant.copyOf(restaurantRecord, (updated) => {
-              Object.assign(updated, modelFields);
-            })
-          );
+          await DataStore.save(new User(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
+          }
+          if (clearOnSuccess) {
+            resetStateValues();
           }
         } catch (err) {
           if (onError) {
@@ -132,60 +115,39 @@ export default function RestaurantUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "RestaurantUpdateForm")}
+      {...getOverrideProps(overrides, "RegisterUser")}
       {...rest}
     >
       <TextField
-        label="Name"
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>UserName</span>
+            <span style={{ color: "red" }}>*</span>
+          </span>
+        }
         isRequired={true}
         isReadOnly={false}
-        value={Name}
+        value={name}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              Name: value,
-              adminSub,
+              name: value,
               contactNumber,
+              sub,
             };
             const result = onChange(modelFields);
-            value = result?.Name ?? value;
+            value = result?.name ?? value;
           }
-          if (errors.Name?.hasError) {
-            runValidationTasks("Name", value);
+          if (errors.name?.hasError) {
+            runValidationTasks("name", value);
           }
           setName(value);
         }}
-        onBlur={() => runValidationTasks("Name", Name)}
-        errorMessage={errors.Name?.errorMessage}
-        hasError={errors.Name?.hasError}
-        {...getOverrideProps(overrides, "Name")}
-      ></TextField>
-      <TextField
-        label="Admin sub"
-        isRequired={true}
-        isReadOnly={false}
-        value={adminSub}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              Name,
-              adminSub: value,
-              contactNumber,
-            };
-            const result = onChange(modelFields);
-            value = result?.adminSub ?? value;
-          }
-          if (errors.adminSub?.hasError) {
-            runValidationTasks("adminSub", value);
-          }
-          setAdminSub(value);
-        }}
-        onBlur={() => runValidationTasks("adminSub", adminSub)}
-        errorMessage={errors.adminSub?.errorMessage}
-        hasError={errors.adminSub?.hasError}
-        {...getOverrideProps(overrides, "adminSub")}
+        onBlur={() => runValidationTasks("name", name)}
+        errorMessage={errors.name?.errorMessage}
+        hasError={errors.name?.hasError}
+        {...getOverrideProps(overrides, "name")}
       ></TextField>
       <TextField
         label="Contact number"
@@ -197,9 +159,9 @@ export default function RestaurantUpdateForm(props) {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              Name,
-              adminSub,
+              name,
               contactNumber: value,
+              sub,
             };
             const result = onChange(modelFields);
             value = result?.contactNumber ?? value;
@@ -214,19 +176,49 @@ export default function RestaurantUpdateForm(props) {
         hasError={errors.contactNumber?.hasError}
         {...getOverrideProps(overrides, "contactNumber")}
       ></TextField>
+      <TextField
+        label={
+          <span style={{ display: "inline-flex" }}>
+            <span>Sub</span>
+            <span style={{ color: "red" }}>*</span>
+          </span>
+        }
+        isRequired={true}
+        isReadOnly={false}
+        value={sub}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              name,
+              contactNumber,
+              sub: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.sub ?? value;
+          }
+          if (errors.sub?.hasError) {
+            runValidationTasks("sub", value);
+          }
+          setSub(value);
+        }}
+        onBlur={() => runValidationTasks("sub", sub)}
+        errorMessage={errors.sub?.errorMessage}
+        hasError={errors.sub?.hasError}
+        {...getOverrideProps(overrides, "sub")}
+      ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Reset"
+          children="Clear"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || restaurantModelProp)}
-          {...getOverrideProps(overrides, "ResetButton")}
+          {...getOverrideProps(overrides, "ClearButton")}
         ></Button>
         <Flex
           gap="15px"
@@ -236,10 +228,7 @@ export default function RestaurantUpdateForm(props) {
             children="Submit"
             type="submit"
             variation="primary"
-            isDisabled={
-              !(idProp || restaurantModelProp) ||
-              Object.values(errors).some((e) => e?.hasError)
-            }
+            isDisabled={Object.values(errors).some((e) => e?.hasError)}
             {...getOverrideProps(overrides, "SubmitButton")}
           ></Button>
         </Flex>

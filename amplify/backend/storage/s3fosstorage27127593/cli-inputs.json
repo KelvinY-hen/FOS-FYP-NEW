@@ -1,0 +1,16 @@
+{
+  "resourceName": "s3fosstorage27127593",
+  "bucketName": "fos-storage-27127593",
+  "policyUUID": "f51b2067",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

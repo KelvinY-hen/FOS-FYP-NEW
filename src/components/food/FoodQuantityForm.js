@@ -41,7 +41,7 @@ const FoodQuantityForm = (props) => {
         }}
       />
 
-      <button>+ Add</button>
+      <button className="text-xl md:2xl">+ Add</button>
       {!amountIsValid && <p>Please enter a valid amount (1-10).</p>}
 
        

@@ -16,12 +16,14 @@ import OrdersList from './order/orderList'
 import DetailedOrder from './order/orderDetail'
 import UserOrdersList from './order/userOrderList'
 import UserDetailedOrder from './order/userOrderDetail'
+import UpdateUser from './user/UpdateUser'
 
 
 const AppRoutes =() => {
     return (
         <Routes>
             <Route path="/*" element={<Home />} />
+            <Route path="/User/Edit" element={<UpdateUser/>} />
             <Route path="/Restaurant/Create" element={<CreateRestaurant />} />
             <Route path="/Restaurant/:id" element={<Menu />} />
             <Route path="/Restaurant/Edit/:id" element={<UpdateRestaurant />} />

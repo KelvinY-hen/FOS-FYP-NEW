@@ -26,7 +26,7 @@ const OrderDelivered = (props) => {
 
         for (const item of basketContext.basketDishes) {
           console.log("tempe");
-          console.log(item.id);
+          console.log(item);
           console.log(foodIngredientList);
 
           const foodIngredientItem = foodIngredients.find(
@@ -45,9 +45,7 @@ const OrderDelivered = (props) => {
             continue;
           }
 
-          const newQuantity =
-            ingredientItem.quantity -
-            foodIngredientItem.recipeQuantity * item.amount;
+          var newQuantity = ingredientItem.quantity - foodIngredientItem.recipeQuantity * item.quantity;
           console.log(newQuantity);
 
           await DataStore.save(
@@ -105,12 +103,12 @@ const OrderDelivered = (props) => {
     // handleAction();
   }, [restaurant]);
 
-  const onCreateOrder = async () => {
-    const newOrder = await basketContext.createOrder();
-  };
+  // const onCreateOrder = async () => {
+  //   const newOrder = await basketContext.createOrder();
+  // };
 
   const clearall = () => {
-    cartContext.clearall();
+    basketContext.clearDish();
   };
 
   return (
@@ -128,7 +126,8 @@ const OrderDelivered = (props) => {
           className={classes["button--alt"]}
           onClick={() => {
             props.onClose();
-            onCreateOrder()
+            // onCreateOrder()
+            clearall();
           }}
         >
           Close
