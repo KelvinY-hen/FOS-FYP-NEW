@@ -84,7 +84,6 @@ function CreateFood() {
   ];
 
   const handleAdd = async () => {
-    setIsLoading(true);
     try {
       if (!title || !price || !category) {
         setFields(true);
@@ -92,7 +91,6 @@ function CreateFood() {
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
-          setIsLoading(false);
         }, 4000);
       } else {
         const {key} = await Storage.put(`${restaurant.id}${title}${price}`, foodImage.file)
@@ -108,7 +106,6 @@ function CreateFood() {
             hide: false
           })
         );
-        setIsLoading(false);
         setFields(true);
         setMsg("Data Uploaded successfully 😊");
         setAlertStatus("success");
@@ -123,7 +120,6 @@ function CreateFood() {
       setAlertStatus("danger");
       setTimeout(() => {
         setFields(false);
-        setIsLoading(false);
       }, 4000);
     }
   };

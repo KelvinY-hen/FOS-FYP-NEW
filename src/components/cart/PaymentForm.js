@@ -12,6 +12,7 @@ import { useState, useContext } from "react";
 import classes from "./PaymentForm.module.css";
 import Modal from "../UI/Modal";
 import OrderDelivered from "./OrderDelivered";
+import { motion } from "framer-motion";
 
 const stripeKey = loadStripe(
   "pk_test_51NDL7nC2FSMiNaQb6uFctw1DsZ998ri8tswOMPmPIChuF8y2jCoFv5TxhMj9p8U91GM93rdebs2d9RmythBeruV4003NMDb4ob"

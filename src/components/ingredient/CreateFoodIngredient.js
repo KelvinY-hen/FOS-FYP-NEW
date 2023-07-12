@@ -76,7 +76,6 @@ function CreateFoodIngredient() {
       const ingredient = ingredientList.find(
         (ing) => ing.id === foodIngredient.ingredientID
       );
-      D
       if (ingredient) {
         setIngredient((prevIngredients) =>
           prevIngredients.filter((ing) => ing.id !== ingredient.id)
