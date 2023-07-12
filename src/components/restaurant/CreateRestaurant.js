@@ -139,7 +139,7 @@ function CreateRestaurant() {
         </div>
         {!valid && (
           <p className="text-red-500">
-            Please enter a valid phone number in the AWS format.
+            Please enter a valid phone number in the AWS format
           </p>
         )}
         {/*         
