@@ -45,7 +45,7 @@ function UpdateFood() {
 
   useEffect(() => {
     DataStore.query(Foods, id).then(setFood);
-  }, [id]);
+  }, [id, Foods]);
 
   useEffect(() => {
     const getImage = async () => {
@@ -83,7 +83,7 @@ function UpdateFood() {
       console.log(title, description, price, category);
       if (!title || !price || !category) {
         setFields(true);
-        setMsg("Required fields can't be empty");
+        setMsg("Please fill out all required fields");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
@@ -128,8 +128,11 @@ function UpdateFood() {
     }
   };
 
-  const handleDelete = (food) => {
-    DataStore.delete(food);
+  const handleDelete = async () => {
+    if (oldFoodImage){
+      await Storage.remove(oldFoodImage.file);
+    }
+    DataStore.delete(Food);
 
     setFields(true);
     setMsg("Data Deleted Succesfully");
@@ -176,7 +179,7 @@ function UpdateFood() {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Give me a title..."
+            placeholder="Give me a name..."
             className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-orange-400 text-textColor"
           />
         </div>

@@ -25,10 +25,12 @@ const AvailableFoods = () => {
 
   useEffect(() => {
     setOwner(false);
-    if (restaurant.id === id) {
-      setOwner(true);
-    } else {
-      setOwner(false);
+    if (restaurant) {
+      if (restaurant.id === id) {
+        setOwner(true);
+      } else {
+        setOwner(false);
+      }
     }
 
     DataStore.query(Restaurant, id).then(setThisRestaurant);
@@ -81,9 +83,10 @@ const AvailableFoods = () => {
         <motion.div
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -10, opacity: 0 }}
+          exit={{ y: 10, opacity: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 1 }}
-        >
+        > 
           <Card>
             <FoodItems
               id={food.id}
@@ -140,8 +143,12 @@ const AvailableFoods = () => {
         </motion.p>
       )}
       <div className="w-full flex flex-col items-center justify-center gap-5">
-        <h1 className=" font-bold text-5xl">{basketContext.restaurantBasket?.Name}</h1>
-        <h3 className=" text-orange-300">Contact Number    : {basketContext.restaurantBasket?.contactNumber}</h3>
+        <h1 className=" font-bold text-5xl">
+          {basketContext.restaurantBasket?.Name}
+        </h1>
+        <h3 className=" text-orange-300">
+          Contact Number : {basketContext.restaurantBasket?.contactNumber}
+        </h3>
       </div>
       <div className=" w-full flex items-center justify-center lg:justify-center gap-2 py-6 overflow-x-clip hover:overflow-x-scroll md:no-scrollbar">
         {categoryList &&

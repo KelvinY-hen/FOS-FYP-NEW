@@ -2,6 +2,11 @@ import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
 
+export enum PaymentMethod {
+  CASH = "CASH",
+  ONLINE = "ONLINE"
+}
+
 export enum Type {
   DINEIN = "DINEIN",
   PICKUP = "PICKUP"
@@ -12,7 +17,8 @@ export enum OrderStatus {
   ACCEPTED = "ACCEPTED",
   REJECTED = "REJECTED",
   READY_FOR_PICKEDUP = "READY_FOR_PICKEDUP",
-  COMPLETED = "COMPLETED"
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED"
 }
 
 
@@ -127,6 +133,8 @@ type EagerOrder = {
   readonly restaurantID: string;
   readonly table?: number | null;
   readonly Type?: Type | keyof typeof Type | null;
+  readonly paymentMethod?: PaymentMethod | keyof typeof PaymentMethod | null;
+  readonly orderNote?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -145,6 +153,8 @@ type LazyOrder = {
   readonly restaurantID: string;
   readonly table?: number | null;
   readonly Type?: Type | keyof typeof Type | null;
+  readonly paymentMethod?: PaymentMethod | keyof typeof PaymentMethod | null;
+  readonly orderNote?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -382,7 +392,7 @@ type EagerFoods = {
   readonly restaurantID: string;
   readonly CartFoods?: (CartFood | null)[] | null;
   readonly OrderFoods?: (OrderFood | null)[] | null;
-  readonly hide?: boolean | null;
+  readonly hide: boolean;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -402,7 +412,7 @@ type LazyFoods = {
   readonly restaurantID: string;
   readonly CartFoods: AsyncCollection<CartFood>;
   readonly OrderFoods: AsyncCollection<OrderFood>;
-  readonly hide?: boolean | null;
+  readonly hide: boolean;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

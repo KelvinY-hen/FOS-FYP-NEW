@@ -1,3 +1,8 @@
+enum PaymentMethod {
+  CASH
+  ONLINE
+}
+
 enum Type {
   DINEIN
   PICKUP
@@ -34,6 +39,8 @@ type Order @model @auth(rules: [{allow: public}]) {
   restaurantID: ID! @index(name: "byRestaurant")
   table: Int
   Type: Type
+  paymentMethod: PaymentMethod
+  orderNote: String
 }
 
 type FoodIngredient @model @auth(rules: [{allow: public}]) {
@@ -49,6 +56,7 @@ enum OrderStatus {
   REJECTED
   READY_FOR_PICKEDUP
   COMPLETED
+  CANCELLED
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -106,6 +114,6 @@ type Foods @model @auth(rules: [{allow: public}]) {
   restaurantID: ID! @index(name: "byRestaurant")
   CartFoods: [CartFood] @hasMany(indexName: "byFoods", fields: ["id"])
   OrderFoods: [OrderFood] @hasMany(indexName: "byFoods", fields: ["id"])
-  hide: Boolean
+  hide: Boolean!
 }
  

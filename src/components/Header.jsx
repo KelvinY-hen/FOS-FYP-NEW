@@ -72,14 +72,6 @@ const Header = (props) => {
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.5 }}
                   className="text-base hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer"
-                  onClick={() => NavigatePages("User/Edit")}
-                >
-                  Update Profile{" "}
-                </motion.li>
-                <motion.li
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.5 }}
-                  className="text-base hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer"
                   onClick={() => NavigatePages("Food/Create")}
                 >
                   New Food{" "}
@@ -126,6 +118,14 @@ const Header = (props) => {
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.5 }}
               className="text-base hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer"
+              onClick={() => NavigatePages("User/Edit")}
+            >
+              Update Profile{" "}
+            </motion.li>
+            <motion.li
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.5 }}
+              className="text-base hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer"
               onClick={() => NavigatePages("/Order")}
             >
               View Your Order{" "}
@@ -146,11 +146,7 @@ const Header = (props) => {
             </div>
           </motion.div>
 
-          <motion.div
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.5 }}
-            className="relative flext item-center justify-center"
-          >
+          <div className="relative flext item-center justify-center">
             <CgProfile
               className=" hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer drop-shadow-2xl text-3xl"
               onClick={login}
@@ -165,7 +161,7 @@ const Header = (props) => {
                 </p>
               </div>
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -204,14 +200,6 @@ const Header = (props) => {
                 {restaurant && (
                   <>
                     <li
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.5 }}
-                      className="text-base text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer hover:bg-slate-100 px-4 py-2"
-                      onClick={() => NavigatePages("User/Edit")}
-                    >
-                      Update Profile{" "}
-                    </li>
-                    <li
                       className="text-base text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer hover:bg-slate-100 px-4 py-2"
                       onClick={() => NavigatePages("Food/Create")}
                     >
@@ -247,6 +235,14 @@ const Header = (props) => {
                     </li>
                   </>
                 )}
+                <li
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.5 }}
+                  className="text-base text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer hover:bg-slate-100 px-4 py-2"
+                  onClick={() => NavigatePages("User/Edit")}
+                >
+                  Update Profile{" "}
+                </li>
                 <li
                   className="text-base text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer hover:bg-slate-100 px-4 py-2"
                   onClick={() => NavigatePages("/Order")}

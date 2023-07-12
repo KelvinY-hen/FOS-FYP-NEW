@@ -47,7 +47,7 @@ function UpdateIngredient() {
     try {
       if (!name || !quantity) {
         setFields(true);
-        setMsg("Required fields can't be empty");
+        setMsg("Please fill out all required fields");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
@@ -107,7 +107,7 @@ return (
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Give me a title..."
+          placeholder="Give me a name..."
           className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-orange-400 text-textColor"
         />
       </div>

@@ -2,6 +2,11 @@
 import { initSchema } from '@aws-amplify/datastore';
 import { schema } from './schema';
 
+const PaymentMethod = {
+  "CASH": "CASH",
+  "ONLINE": "ONLINE"
+};
+
 const Type = {
   "DINEIN": "DINEIN",
   "PICKUP": "PICKUP"
@@ -12,7 +17,8 @@ const OrderStatus = {
   "ACCEPTED": "ACCEPTED",
   "REJECTED": "REJECTED",
   "READY_FOR_PICKEDUP": "READY_FOR_PICKEDUP",
-  "COMPLETED": "COMPLETED"
+  "COMPLETED": "COMPLETED",
+  "CANCELLED": "CANCELLED"
 };
 
 const { CartFood, OrderFood, Cart, Order, FoodIngredient, User, Restaurant, Payment, Ingredient, Categories, Foods } = initSchema(schema);
@@ -29,6 +35,7 @@ export {
   Ingredient,
   Categories,
   Foods,
+  PaymentMethod,
   Type,
   OrderStatus
 };

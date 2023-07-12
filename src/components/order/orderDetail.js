@@ -10,6 +10,7 @@ import {
   Ingredient,
   FoodIngredient,
   User,
+  Type,
 } from "../../models";
 import { motion } from "framer-motion";
 import { useCTX } from "../../context/Context";
@@ -22,14 +23,17 @@ const statusToColor = {
   [OrderStatus.COMPLETED]: "purple",
 };
 
+const typeToColor = {
+  [Type.DINEIN]: "green",
+  [Type.PICKUP]: "blue",
+};
+
 const DetailedOrder = () => {
   const { id } = useParams();
-  const { basketContext } = useCTX();
 
   const [dbUser, setDBUser] = useState([]);
   const [order, setOrder] = useState("");
   const [dishes, setDishes] = useState([]);
-  const [food, setFood] = useState("");
 
   useEffect(() => {
     DataStore.query(Order, id).then(setOrder);
@@ -41,7 +45,6 @@ const DetailedOrder = () => {
     );
   }, [order?.userID]);
 
-  console.log(dbUser);
   useEffect(() => {
     if (!order?.id) {
       return;
@@ -49,85 +52,69 @@ const DetailedOrder = () => {
     const fetchData = async () => {
       const [oFood, tempFood] = await Promise.all([
         DataStore.query(OrderFood, (of) => of.orderID.eq(order.id)),
-        DataStore.query(Foods),
+        DataStore.query(Foods, (of) => of.restaurantID.eq(order?.restaurantID)),
       ]);
 
       const updatedOrderedFoods = oFood.map((of) => ({
         ...of,
         name:
-          tempFood.find((f) => f.id === of.foodsID)?.name || "name not found",
+          tempFood.find((f) => f.id === of.foodsID)?.name || "Name Not Found",
         price: tempFood.find((f) => f.id === of.foodsID)?.price || 0,
       }));
-      console.log(updatedOrderedFoods);
       setDishes(updatedOrderedFoods);
     };
 
     fetchData();
   }, [order?.id]);
 
-  const deleteData = async () => {
+  const reduceIngredient = async () => {
     try {
       const [ingredients, foodIngredients] = await Promise.all([
-        DataStore.query(Ingredient),
-        DataStore.query(FoodIngredient),
+        DataStore.query(Ingredient, (I) => I.restaurantID.eq(order?.restaurantID)),
+        DataStore.query(FoodIngredient, (FI) => FI.restaurantID.eq(order?.restaurantID)),
       ]);
 
       for (const item of dishes) {
-        console.log("tempe");
-        console.log(item);
 
-        const foodIngredientItem = foodIngredients.find(
+        const foodIngredientItems = foodIngredients.filter(
           (ing) => ing.foodsID === item.foodsID
         );
-        console.log(foodIngredientItem);
-        if (!foodIngredientItem) {
+
+        if (!foodIngredientItems) {
           continue;
         }
 
-        const ingredientItem = ingredients.find(
-          (ing) => ing.id === foodIngredientItem.ingredientID
-        );
-        console.log(ingredientItem);
-        if (!ingredientItem) {
-          continue;
+        for (const foodIngredientItem of foodIngredientItems) {
+          const ingredientItem = ingredients.find(
+            (ing) => ing.id === foodIngredientItem.ingredientID
+          );
+
+          if (!ingredientItem) {
+            continue;
+          }
+
+          const newQuantity =
+            ingredientItem.quantity -
+            foodIngredientItem.recipeQuantity * item.quantity;
+
+          await DataStore.save(
+            Ingredient.copyOf(ingredientItem, (updated) => {
+              updated.quantity = newQuantity;
+            })
+          );
         }
-
-        var newQuantity =
-          ingredientItem.quantity +
-          foodIngredientItem.recipeQuantity * item.quantity;
-        console.log(newQuantity);
-
-        await DataStore.save(
-          Ingredient.copyOf(ingredientItem, (updated) => {
-            updated.quantity = newQuantity;
-          })
-        );
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
-  //   useEffect(() => {
-  //     console.log(dishes)
-  //     const foodTemp = dishes.map((dish) => {
-  //       ...dish,
-  //       name:
-  //     });
-  //     console.log(foodTemp)
-  //     setFood(foodTemp);
-
-  //   }, [dishes?.id]);
-
-  useEffect(() => {
-    console.log(food);
-  });
+  
   const acceptOrder = async () => {
+    await reduceIngredient();
     updateOrderStatus(OrderStatus.ACCEPTED);
   };
 
   const declineOrder = async () => {
-    await deleteData();
     updateOrderStatus(OrderStatus.REJECTED);
   };
 
@@ -161,10 +148,22 @@ const DetailedOrder = () => {
     >
       <Card title={`Order ${id}`} style={{ margin: 20 }}>
         <Tag color={statusToColor[order?.status]}>{order?.status}</Tag>
+        <Tag color={typeToColor[order?.Type]}>{order?.Type}</Tag>
         <Descriptions bordered column={{ lg: 1, md: 1, sm: 1 }}>
           <Descriptions.Item label="Customer">{dbUser?.name}</Descriptions.Item>
           <Descriptions.Item label="Customer Contact">
             {dbUser?.contactNumber}
+          </Descriptions.Item>
+          {order?.table === "DINEIN" && (
+            <Descriptions.Item label="Table Number">
+              {order?.table}
+            </Descriptions.Item>
+          )}
+          <Descriptions.Item label="Payment Method">
+            {order?.paymentMethod}
+          </Descriptions.Item>
+          <Descriptions.Item label="Payment Method">
+            {order?.orderNote}
           </Descriptions.Item>
         </Descriptions>
         <Divider />
@@ -194,15 +193,6 @@ const DetailedOrder = () => {
             >
               Decline Order
             </button>
-            {/* <Button
-              block
-              type="primary"
-              size="large"
-              style={styles.button}
-              onClick={acceptOrder}
-            >
-              Accept Order
-            </Button> */}
             <button
               className={` w-full px-8 py-3 mx-5 transition duration-500 rounded-lg bg-blue-500 hover:bg-white text-white hover:text-blue-500 ${styles.button}`}
               onClick={acceptOrder}

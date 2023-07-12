@@ -361,6 +361,22 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "paymentMethod": {
+                    "name": "paymentMethod",
+                    "isArray": false,
+                    "type": {
+                        "enum": "PaymentMethod"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "orderNote": {
+                    "name": "orderNote",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1161,7 +1177,7 @@ export const schema = {
                     "name": "hide",
                     "isArray": false,
                     "type": "Boolean",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "createdAt": {
@@ -1226,6 +1242,13 @@ export const schema = {
         }
     },
     "enums": {
+        "PaymentMethod": {
+            "name": "PaymentMethod",
+            "values": [
+                "CASH",
+                "ONLINE"
+            ]
+        },
         "Type": {
             "name": "Type",
             "values": [
@@ -1240,11 +1263,12 @@ export const schema = {
                 "ACCEPTED",
                 "REJECTED",
                 "READY_FOR_PICKEDUP",
-                "COMPLETED"
+                "COMPLETED",
+                "CANCELLED"
             ]
         }
     },
     "nonModels": {},
     "codegenVersion": "3.4.4",
-    "version": "609ac0a2ae50f8f6cec6b11297f30b91"
+    "version": "0c62082edb80f86a38679f8504b384b8"
 };

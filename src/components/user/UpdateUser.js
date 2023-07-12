@@ -9,7 +9,8 @@ import {
   MdDelete,
   MdFoodBank,
   MdAttachMoney,
-  MdAbc
+  MdAbc,
+  MdNumbers
 } from "react-icons/md";
 import { useCTX } from "../../context/Context";
 import { User } from "../../models";
@@ -77,7 +78,7 @@ function UpdateUser() {
     try {
       if (!name || !number || !valid) {
         setFields(true);
-        setMsg("Required fields can't be empty");
+        setMsg("Please fill out all required fields");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
@@ -115,7 +116,7 @@ function UpdateUser() {
 
   const handleNumber = (e) => {
     const num = e.target.value;
-    const regex = /^\+?(60)?[1-9]\d{1,14}$/;
+    const regex = /^\+?(60)?[1-9]\d{8,14}$/;
     console.log(regex.test(num))
     if (regex.test(num) === false){
       setValid(false)
@@ -145,18 +146,18 @@ return (
       )}
 
       <div className="w-full py-2 border-b border-orange-200 flex items-center gap-2">
-        <MdFastfood className="text-xl text-orange-700" />
+        <MdAbc className="text-xl text-orange-700" />
         <input
           type="text"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Give me a title..."
+          placeholder="Give me a name..."
           className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-orange-400 text-textColor"
         />
       </div>
       <div className="w-full py-2 border-b border-orange-200 flex items-center gap-2">
-        <MdFastfood className="text-xl text-orange-700" />
+        <MdNumbers className="text-xl text-orange-700" />
         <input
           type="text"
           required

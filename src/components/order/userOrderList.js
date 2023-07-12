@@ -11,6 +11,7 @@ const UserOrdersList = () => {
   const [orders, setOrders] = useState([]);
   const { restaurant } = useCTX();
   const [user, setUser] = useState();
+  const {render, setRender} = (false)
   
   useEffect(() => {
     Auth.currentAuthenticatedUser({ bypassCache: true }).then(setUser);
@@ -20,9 +21,7 @@ const UserOrdersList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!restaurant) {
-      return;
-    }
+    console.log(sub)
     DataStore.query(Order, (order) =>
       order.and((o) => [
         o.userID.eq(sub),
@@ -32,6 +31,7 @@ const UserOrdersList = () => {
           orderStatus.status.eq("REJECTED"),
           orderStatus.status.eq("READY_FOR_PICKEDUP"),
           orderStatus.status.eq("COMPLETED"),
+          orderStatus.status.eq("CANCELLED"),
         ]),
       ])
     ).then(setOrders);
@@ -51,6 +51,7 @@ const UserOrdersList = () => {
   const renderOrderStatus = (orderStatus) => {
     const statusToColor = {
       [OrderStatus.RECEIVED]: "green",
+      [OrderStatus.CANCELLED]: "pink",
       [OrderStatus.ACCEPTED]: "orange",
       [OrderStatus.REJECTED]: "red",
       [OrderStatus.READY_FOR_PICKEDUP]: "yellow",
@@ -140,6 +141,10 @@ const UserOrdersList = () => {
         {
           text: "COMPLETED",
           value: "COMPLETED",
+        },
+        {
+          text: "CANCELLED",
+          value: "CANCELLED",
         },
       ],
       onFilter: (value, record) => record.status.indexOf(value) === 0,

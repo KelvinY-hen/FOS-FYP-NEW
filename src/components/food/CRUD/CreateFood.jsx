@@ -30,10 +30,10 @@ function CreateFood() {
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState();
   const [foodImage, setFoodImage] = useState({file: null, url: ""});
+
   const [fields, setFields] = useState(false);
   const [alertStatus, setAlertStatus] = useState("danger");
   const [msg, setMsg] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const [ingredientList, setIngredient] = useState();
   const [selectedRows, setSelectedRows] = useState([]);
@@ -88,7 +88,7 @@ function CreateFood() {
     try {
       if (!title || !price || !category) {
         setFields(true);
-        setMsg("Required fields can't be empty");
+        setMsg("Please fill out all required fields");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
@@ -196,7 +196,7 @@ const deleteImage = () => {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Give me a title..."
+              placeholder="Give me a name..."
               className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-orange-400 text-textColor"
             />
           </div>

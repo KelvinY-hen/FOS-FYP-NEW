@@ -25,60 +25,19 @@ import FoodQuantityForm from "../food/FoodQuantityForm";
 function CreateFoodIngredient() {
   const { id } = useParams();
 
-  const { cartContext, restaurant } = useCTX();
+  const {restaurant } = useCTX();
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [ingredientList, setIngredient] = useState([]);
   const [foodIngredientList, setFoodIngredient] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRows2, setSelectedRows2] = useState([]);
-  const [initialdata, setInitialDataFetched] = useState(null);
 
   const [fields, setFields] = useState(false);
   const [alertStatus, setAlertStatus] = useState("danger");
   const [msg, setMsg] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [trigger, setTrigger] = useState(false);
-
-  // useEffect(() => {
-  //   if (!restaurant) {
-  //     return;
-  //   }
-  //   const fetchData = async () => {
-
-  //     try {
-  //       const [ingredients, foods, foodIngredients] = await Promise.all([
-  //         DataStore.query(Ingredient),
-  //         DataStore.query(Foods),
-  //         DataStore.query(FoodIngredient, (f) => f.foodsID?.eq(id))
-  //       ]);
-  //       setFood(foods);
-  //       setIngredient(ingredients);
-  //       const updatedFoodIngredients = foodIngredients.map((foodIngredient) => ({
-  //         ...foodIngredient,
-  //         ingredientName: ingredients.find((ing) => ing.id === foodIngredient.ingredientID)?.name || null,
-  //         foodName: foods.find((ing) => ing.id === foodIngredient.foodsID)?.name || null
-  //       }));
-
-  //       setFoodIngredient(updatedFoodIngredients);
-  //     foodIngredientList.forEach((foodIngredient) => {
-  //       const ingredient = ingredientList.find((ing) => ing.id === foodIngredient.ingredientID);
-  //       if (ingredient) {
-  //           setIngredient(ingredientList.filter((ing) => ing.id !== ingredient.id))
-  //       }
-  //   })
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-
-  //   ;
-  // },
-  //    [restaurant]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,18 +60,9 @@ function CreateFoodIngredient() {
           })
         );
 
-        console.log(foodIngredientList);
-        console.log(updatedFoodIngredients);
         setIngredient(ingredients);
         setFoodIngredient(updatedFoodIngredients);
 
-        // foodIngredientList.forEach((foodIngredient) => {
-        //   const ingredient = ingredients.find((ing) => ing.id === foodIngredient.ingredientID);
-        //   if (ingredient) {
-        //     setIngredient((prevIngredients) => prevIngredients.filter((ing) => ing.id !== ingredient.id));
-        //     console.log(ingredientList)
-        //   }
-        // });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -122,13 +72,11 @@ function CreateFoodIngredient() {
   }, [restaurant, trigger]);
 
   useEffect(() => {
-    console.log("Initial data fetching and state updates completed");
-    // Run the last function here
     foodIngredientList.forEach((foodIngredient) => {
       const ingredient = ingredientList.find(
         (ing) => ing.id === foodIngredient.ingredientID
       );
-      console.log("Found ingredient:", ingredient);
+      D
       if (ingredient) {
         setIngredient((prevIngredients) =>
           prevIngredients.filter((ing) => ing.id !== ingredient.id)
@@ -136,7 +84,6 @@ function CreateFoodIngredient() {
       }
     });
 
-    console.log("Ingredient list after filtering:", ingredientList);
   }, [foodIngredientList]);
 
   const tableColumns = [
@@ -205,44 +152,14 @@ function CreateFoodIngredient() {
     },
   ];
 
-  // useEffect(() => {
-  //   DataStore.query(FoodIngredient, (f) => f.foodsID?.eq(id) ).then((foodIngredients) => {
-  //     const updatedFoodIngredients = foodIngredients?.map((foodIngredient) => ({
-  //       ...foodIngredient,
-  //       ingredientName: DataStore.query(Ingredient, foodIngredient.ingredientID)?.name || null,
-  //       foodName: foodList.find((ing) => ing.id === foodIngredient.foodsID)?.name || null
-  //     }));
-  //     setFoodIngredient(updatedFoodIngredients);
-  //     foodIngredientList.map((foodIngredient) => {
-  //       const ingredient = ingredientList.find((ing) => ing.id === foodIngredient.ingredientID);
-  //       if (ingredient) {
-  //           setIngredient(ingredientList.filter((ing) => ing.id !== ingredient.id))
-  //           console.log("penis")
-  //       }
-  //   })
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   foodIngredientList.map((foodIngredient) => {
-  //     const ingredient = ingredientList.find((ing) => ing.id === foodIngredient.ingredientID);
-  //     if (ingredient) {
-  //         setIngredient(ingredientList.filter((ing) => ing.id !== ingredient.id))
-  //     }
-  // })},[foodIngredientList])
-
   const handleAdd = () => {
-    setIsLoading(true);
-    console.log(selectedRows);
-    console.log(quantity);
     try {
       if (!selectedRows || !quantity) {
         setFields(true);
-        setMsg("Required fields can't be empty");
+        setMsg("Please fill out all required fields");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
-          setIsLoading(false);
         }, 4000);
       } else {
         DataStore.save(
@@ -253,9 +170,7 @@ function CreateFoodIngredient() {
           })
         );
         setTrigger(!trigger);
-        setInitialDataFetched(false);
 
-        setIsLoading(false);
         setFields(true);
         setMsg("Data Uploaded successfully 😊");
         setAlertStatus("success");
@@ -266,11 +181,10 @@ function CreateFoodIngredient() {
     } catch (error) {
       console.log(error);
       setFields(true);
-      setMsg("Error while uploading : Try AGain 🙇");
+      setMsg("Error while uploading");
       setAlertStatus("danger");
       setTimeout(() => {
         setFields(false);
-        setIsLoading(false);
       }, 4000);
     }
   };

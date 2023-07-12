@@ -27,6 +27,7 @@ const OrdersList = () => {
           orderStatus.status.eq("REJECTED"),
           orderStatus.status.eq("READY_FOR_PICKEDUP"),
           orderStatus.status.eq("COMPLETED"),
+          orderStatus.status.eq("CANCELLED"),
         ]),
       ])
     ).then(setOrders);
@@ -46,6 +47,7 @@ const OrdersList = () => {
   const renderOrderStatus = (orderStatus) => {
     const statusToColor = {
       [OrderStatus.RECEIVED]: "green",
+      [OrderStatus.CANCELLED]: "pink",
       [OrderStatus.ACCEPTED]: "orange",
       [OrderStatus.REJECTED]: "red",
       [OrderStatus.READY_FOR_PICKEDUP]: "yellow",
@@ -136,6 +138,10 @@ const OrdersList = () => {
         {
           text: "COMPLETED",
           value: "COMPLETED",
+        },
+        {
+          text: "CANCELLED",
+          value: "CANCELLED",
         },
       ],
       onFilter: (value, record) => record.status.indexOf(value) === 0,

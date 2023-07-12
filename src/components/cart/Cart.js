@@ -12,6 +12,10 @@ import dayjs from "dayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import Switch from "@mui/material/Switch";
+import {
+  MdAbc
+} from "react-icons/md";
 
 const Cart = (props) => {
   const { cartContext, basketContext } = useCTX();
@@ -21,6 +25,9 @@ const Cart = (props) => {
   const [foodser, setFoods] = useState([]);
   const [amountIsValid, setAmountIsValid] = useState(true);
 
+  const [fields, setFields] = useState(false);
+  const [alertStatus, setAlertStatus] = useState("danger");
+  const [msg, setMsg] = useState(null);
 
   const totalPrice = `$${basketContext.totalPrice.toFixed(2)}`;
   const hasItems = basketContext.basketDishes.length > 0;
@@ -47,53 +54,23 @@ const Cart = (props) => {
     }
   };
 
-  const succesSet = () => {
-    setSuccess(true);
-  };
 
-  const orderHanlder = () => {
-
-    if (basketContext.dineIn &&
-       (basketContext.table < 1 ||
-       basketContext.table > 10)
+  const orderHanlder = async () => {
+    console.log(basketContext.table);
+    if (
+      basketContext.dineIn &&
+      (basketContext.table < 1 ||
+        basketContext.table > 10 ||
+        basketContext.table === null)
     ) {
       setAmountIsValid(false);
       return;
+    } else {
+      await basketContext.createOrder();
+      setShowOrder(true);
     }
-    
-    setShowOrder(true);
   };
 
-  // useEffect(() => {
-  //   setOwner(false)
-  //   if (restaurant.id === id) {
-  //     setOwner(true);
-  //   } else{
-  //     setOwner(false);
-  //   }
-
-  //   DataStore.query(Restaurant, id).then(setThisRestaurant)
-  //   // basketContext.setRestaurantBasket(thisRestaurant)
-  //   DataStore.query(Categories, (c) => c?.restaurantID.eq(id)).then(setCategory)
-  //   DataStore.query(Foods, (f) => f?.restaurantID.eq(id)).then(setFood)
-
-  // },[restaurant, id]);
-
-  // async function fetchData() {
-  //   const fetchedData = await Promise.all(
-  //     basketContext.basketDishes.map(async (item) => {
-  //       const [foods] = await Promise.all([
-  //         DataStore.query(Foods, props.id)
-  //       ]);
-
-  //       return {
-  //         foods
-  //       };
-  //     })
-  //   );
-
-  //   return fetchedData;
-  // }
 
   useEffect(() => {
     DataStore.query(Foods, (f) =>
@@ -101,41 +78,7 @@ const Cart = (props) => {
     ).then(setFoods);
   }, [basketContext.restaurantBasket?.id]);
 
-  // const cartItems = (
-  //   <ul className={classes["cart-items"]}>
-  //     {cartContext.items.map((item) => (
-  //       <CartItem
-  //         key={item.id}
-  //         name={item.name}
-  //         amount={item.amount}
-  //         price={item.price}
-  //         onRemove={cartRemove.bind(null, item.id)}
-  //         onAdd={cartAdd.bind(null, item)}
-  //       />
-  //     ))}
-  //   </ul>
-  // );
-
-  // const cartItems2 = (
-  //   <ul className={classes["cart-items"]}>
-  //     {basketContext.basketDishes.map((item) => {
-  //       // const foods = await DataStore.query(Foods, item.foodID);
-  //       const food = foodser.find((f) => f.id === item.foodID);
-  //       return (
-  //         <CartItem
-  //           key={item.id}
-  //           name="tempe"
-  //           amount={item.quantity}
-  //           price={item.quantity}
-  //           onRemove={cartRemove.bind(null, item.id)}
-  //           onAdd={cartAdd.bind(null, item)}
-  //         />
-  //       );
-  //     })}
-  //   </ul>
-  // );
-
-  const cartItems3 = (
+  const cartItems = (
     <ul className={classes["cart-items"]}>
       {basketContext.basketDishes.map &&
         basketContext.basketDishes.map((item) => (
@@ -150,26 +93,28 @@ const Cart = (props) => {
     </ul>
   );
 
-
-  
-
   return (
     <Modal onClose={props.onClose}>
       {!showOrder ? (
         <>
-          {cartItems3}
+          
+          {cartItems}
           <div className={classes.total}>
             <span>Total Price</span>
             <span>{totalPrice}</span>
           </div>
           <div>
             <label htmlFor="toggle-order">Dine-in? :</label>
-            <input
-              type="checkbox"
+            <Switch
               id="toggle-order"
               checked={basketContext.dineIn}
               onChange={(e) => basketContext.setDineIn(e.target.checked)}
-              className="border border-solid border-1 border-orang-500"
+            />
+            <label htmlFor="toggle-order">Cash Payment :</label>
+            <Switch
+              id="toggle-order"
+              checked={basketContext.cashPayment}
+              onChange={(e) => basketContext.setCashPayment(e.target.checked)}
             />
           </div>
           {!basketContext.dineIn ? (
@@ -178,6 +123,7 @@ const Cart = (props) => {
                 <p className="mb-3">Enter your Pickup Time:</p>
                 <DateTimePicker
                   value={basketContext.dt}
+                  minDateTime={basketContext.later}
                   onChange={(newDt) => basketContext.changeDateTime(newDt)}
                 />
               </LocalizationProvider>
@@ -192,12 +138,28 @@ const Cart = (props) => {
                 min={1}
                 max={20}
                 step={1}
-                onChange={(e) => basketContext.changeTable(parseInt(e.target.value))}
+                onChange={(e) =>
+                  basketContext.changeTable(parseInt(e.target.value))
+                }
               />
-              {!amountIsValid && <p className="text-1xl text-red-500">Please enter a valid table number (1-20).</p>}
+              {!amountIsValid && (
+                <p className="text-1xl text-red-500">
+                  Please enter a valid table number (1-10).
+                </p>
+              )}
             </div>
-            
           )}
+          <div className="w-full py-10 border-b border-orange-300 flex items-center gap-2">
+            <MdAbc className=" text-3xl text-orange-700" />
+            <input
+              type="text"
+              required
+              value={basketContext.orderNote}
+              onChange={(e) => basketContext.setOrderNote(e.target.value)}
+              placeholder="Give me a description"
+              className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-orange-400 text-textColor"
+            />
+          </div>
           <div className={classes.actions}>
             <button className={classes["button--alt"]} onClick={props.onClose}>
               Close
@@ -209,8 +171,10 @@ const Cart = (props) => {
             )}
           </div>
         </>
-      ) : (
+      ) : !basketContext.cashPayment ? (
         <PaymentStripe onClose={props.onClose} />
+      ) : (
+        <OrderDelivered onClose={props.onClose} />
       )}
     </Modal>
   );

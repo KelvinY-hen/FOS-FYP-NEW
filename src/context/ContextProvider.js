@@ -28,17 +28,21 @@ dayjs.extend(timezone);
 const ContextProvider = (props) => {
   const [user, setUser] = useState();
   const [dbUser, setDBUser] = useState();
-  const [restaurant, setRestaurant] = useState([]);
+  const [restaurant, setRestaurant] = useState([]); 
 
   const sub = user?.attributes?.sub;
+
+  const later = dayjs().add(1,'hour')
 
   const [restaurantBasket, setRestaurantBasket] = useState();
   const [basket, setBasket] = useState(null);
   const [basketDishes, setBasketDishes] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [dt, setDt] = useState(dayjs());
-  const [table, setTable] = useState(null);
+  const [dt, setDt] = useState(later);
+  const [table, setTable] = useState(0);
   const [dineIn, setDineIn] = useState(false);
+  const [cashPayment, setCashPayment] = useState(false);
+  const [orderNote, setOrderNote] = useState("");
 
   useEffect(() => {
     Auth.currentAuthenticatedUser({ bypassCache: true }).then(setUser);
@@ -47,6 +51,7 @@ const ContextProvider = (props) => {
   /// Change Context for Account Sub when Changing Account
   useEffect(() => {
     const createUser = async () => {
+      console.log("di dalam gais")
       try {
         const user = await DataStore.save(
           new User({
@@ -62,8 +67,9 @@ const ContextProvider = (props) => {
     };
 
     const checkUser = async () => {
-      const tempUser = await DataStore.query(User, (u) => u.sub.eq(sub));
+      const [tempUser] = await DataStore.query(User, (u) => u.sub.eq(sub));
 
+      console.log(tempUser)
       if (tempUser) {
         setDBUser(tempUser);
       } else {
@@ -112,7 +118,7 @@ const ContextProvider = (props) => {
           ])
         ).then((baskets) => setBasket(baskets[0]));
     }
-    setDt(dayjs());
+    setDt(later);
     setTable(null);
   }, [user, restaurantBasket]);
 
@@ -195,7 +201,7 @@ const ContextProvider = (props) => {
   };
 
   const changeDateTime = (newDt) => {
-    setTable(null);
+    setTable(0);
     setDt(newDt);
   };
 
@@ -244,16 +250,20 @@ const ContextProvider = (props) => {
 
   const createOrder = async () => {
     // create the order
-    console.log("order memek");
     console.log(dt);
     const awsDateTime = dt.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
     console.log(awsDateTime);
     var type = "DINEIN";
+    var payment = "ONLINE"
     console.log(type);
     if (dineIn === false) {
       type = "PICKUP";
       setTable(0);
     }
+    if (cashPayment === true) {
+      payment = "CASH";
+    }
+    console.log(payment)
     const newOrder = await DataStore.save(
       new Order({
         userID: sub,
@@ -263,12 +273,13 @@ const ContextProvider = (props) => {
         DateTime: awsDateTime.toString(),
         table: table,
         Type: type,
+        paymentMethod: payment,
+        orderNote: orderNote
       })
     );
     console.log("memek2");
     console.log(newOrder);
 
-    // add all basketDishes to the order
     await Promise.all(
       basketDishes.map((basketDish) =>
         DataStore.save(
@@ -281,7 +292,6 @@ const ContextProvider = (props) => {
       )
     );
 
-    // delete basket
     await DataStore.delete(basket);
 
     setOrders([...orders, newOrder]);
@@ -314,6 +324,11 @@ const ContextProvider = (props) => {
     changeTable,
     dineIn,
     setDineIn,
+    cashPayment,
+    setCashPayment,
+    later,
+    orderNote,
+    setOrderNote
   };
 
   const ContextValue = {

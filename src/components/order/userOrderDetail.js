@@ -2,15 +2,21 @@ import { Card, Descriptions, Divider, List, Button, Tag, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { DataStore } from "aws-amplify";
-import { Order, OrderFood, OrderStatus, Foods, User } from "../../models";
+import { Order, OrderFood, OrderStatus, Foods, User, Type } from "../../models";
 import { motion } from "framer-motion";
 
 const statusToColor = {
   [OrderStatus.RECEIVED]: "green",
+  [OrderStatus.CANCELLED]: "pink",
   [OrderStatus.ACCEPTED]: "orange",
   [OrderStatus.REJECTED]: "red",
   [OrderStatus.READY_FOR_PICKEDUP]: "yellow",
   [OrderStatus.COMPLETED]: "purple",
+};
+
+const typeToColor = {
+  [Type.DINEIN]: "green",
+  [Type.PICKUP]: "blue",
 };
 
 const UserDetailedOrder = () => {
@@ -19,7 +25,6 @@ const UserDetailedOrder = () => {
   const [dbUser, setDBUser] = useState([]);
   const [order, setOrder] = useState("");
   const [dishes, setDishes] = useState([]);
-  const [food, setFood] = useState("");
 
   useEffect(() => {
     DataStore.query(Order, id).then(setOrder);
@@ -38,13 +43,13 @@ const UserDetailedOrder = () => {
     const fetchData = async () => {
       const [oFood, tempFood] = await Promise.all([
         DataStore.query(OrderFood, (of) => of.orderID.eq(order.id)),
-        DataStore.query(Foods),
+        DataStore.query(Foods, (of) => of.restaurantID.eq(order?.restaurantID)),
       ]);
 
       const updatedOrderedFoods = oFood.map((of) => ({
         ...of,
         name:
-          tempFood.find((f) => f.id === of.foodsID)?.name || "name not found",
+          tempFood.find((f) => f.id === of.foodsID)?.name || "Name Not Found",
         price: tempFood.find((f) => f.id === of.foodsID)?.price || 0,
       }));
       console.log(updatedOrderedFoods);
@@ -65,9 +70,6 @@ const UserDetailedOrder = () => {
 
   //   }, [dishes?.id]);
 
-  useEffect(() => {
-    console.log(food);
-  });
   const acceptOrder = async () => {
     updateOrderStatus(OrderStatus.ACCEPTED);
   };
@@ -78,6 +80,10 @@ const UserDetailedOrder = () => {
 
   const readyForPickup = async () => {
     updateOrderStatus(OrderStatus.READY_FOR_PICKEDUP);
+  };
+
+  const cancelOrder = async () => {
+    updateOrderStatus(OrderStatus.CANCELLED);
   };
 
   const completeOrder = async () => {
@@ -106,10 +112,17 @@ const UserDetailedOrder = () => {
     >
       <Card title={`Order ${id}`} style={{ margin: 20 }}>
         <Tag color={statusToColor[order?.status]}>{order?.status}</Tag>
+        <Tag color={typeToColor[order?.Type]}>{order?.Type}</Tag>
         <Descriptions bordered column={{ lg: 1, md: 1, sm: 1 }}>
           <Descriptions.Item label="Customer">{dbUser?.name}</Descriptions.Item>
           <Descriptions.Item label="Customer Contact">
             {dbUser?.contactNumber}
+          </Descriptions.Item>
+          <Descriptions.Item label="Payment Method">
+            {order?.paymentMethod}
+          </Descriptions.Item>
+          <Descriptions.Item label="Payment Method">
+            {order?.orderNote}
           </Descriptions.Item>
         </Descriptions>
         <Divider />
@@ -130,35 +143,26 @@ const UserDetailedOrder = () => {
           <h2>Total:</h2>
           <h2 style={styles.totalPrice}>${order?.totalPrice?.toFixed(2)}</h2>
         </div>
-        {/* <Divider />
-      {order.status === OrderStatus.RECEIVED && (
-        <div style={styles.buttonsContainer}>
-          <Button
-            block
-            type="danger"
-            size="large"
-            style={styles.button}
-            onClick={declineOrder}
-          >
-            Decline Order
-          </Button>
-          <Button
-            block
-            type="primary"
-            size="large"
-            style={styles.button}
-            onClick={acceptOrder}
-          >
-            Accept Order
-          </Button>
-        </div>
-      )}
-      {order.status === OrderStatus.ACCEPTED && (
+        <Divider />
+        {order.status === OrderStatus.RECEIVED && (
+          <div style={styles.buttonsContainer}>
+            <Button
+              block
+              type="danger"
+              size="large"
+              style={styles.button}
+              onClick={cancelOrder}
+            >
+              Cancel Order
+            </Button>
+          </div>
+        )}
+        {/* {order.status === OrderStatus.ACCEPTED && (
         <Button block type="primary" size="large" onClick={readyForPickup}>
           Food Is Done
         </Button>
-      )}
-      */}
+      )} */}
+
         {order.status === OrderStatus.READY_FOR_PICKEDUP && (
           <button
             className={` w-full px-8 py-3 mx-5 transition duration-500 rounded-lg bg-blue-500 hover:bg-white text-white hover:text-blue-500 ${styles.button}`}

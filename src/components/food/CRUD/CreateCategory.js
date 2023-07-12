@@ -9,7 +9,8 @@ import {
   MdDelete,
   MdFoodBank,
   MdAttachMoney,
-  MdAbc
+  MdAbc,
+  MdCategory
 } from "react-icons/md";
 import { useCTX } from "../../../context/Context";
 import { Categories } from "../../../models";
@@ -46,7 +47,7 @@ function CreateCategory() {
     try {
       if (!name) {
         setFields(true);
-        setMsg("Required fields can't be empty");
+        setMsg("Please fill out all required fields");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
@@ -73,7 +74,7 @@ function CreateCategory() {
     } catch (error) {
       console.log(error);
       setFields(true);
-      setMsg("Error while uploading : Try AGain 🙇");
+      setMsg("Error while uploading : Try Again later");
       setAlertStatus("danger");
       setTimeout(() => {
         setFields(false);
@@ -101,13 +102,13 @@ return (
       )}
 
       <div className="w-full py-2 border-b border-orange-200 flex items-center gap-2">
-        <MdFastfood className="text-xl text-orange-700" />
+        <MdCategory className="text-xl text-orange-700" />
         <input
           type="text"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Give me a title..."
+          placeholder="Give me a name..."
           className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-orange-400 text-textColor"
         />
       </div>

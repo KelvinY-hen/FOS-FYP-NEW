@@ -6,6 +6,7 @@ import { clear } from "@testing-library/user-event/dist/clear";
 import Cart from "./Cart";
 import { useEffect, useState } from "react";
 import { useCTX } from "../../context/Context";
+import { motion } from "framer-motion";
 
 import { DataStore } from "aws-amplify";
 import { Ingredient, FoodIngredient } from "../../models";
@@ -15,6 +16,10 @@ const OrderDelivered = (props) => {
   const [success, setSuccess] = useState(false);
   const [ingredientList, setIngredient] = useState([]);
   const [foodIngredientList, setFoodIngredient] = useState([]);
+
+  const [fields, setFields] = useState(false);
+  const [alertStatus, setAlertStatus] = useState("danger");
+  const [msg, setMsg] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,7 +104,7 @@ const OrderDelivered = (props) => {
     //     );
     //   }
     // };
-    fetchData();
+    // fetchData();
     // handleAction();
   }, [restaurant]);
 
@@ -113,13 +118,23 @@ const OrderDelivered = (props) => {
 
   return (
     <Fragment>
+      {fields && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={`w-full p-2 rounded-lg text-center text-lg font-semibold ${
+              alertStatus === "danger"
+                ? "bg-red-400 text-red-800"
+                : "bg-emerald-400 text-emerald-800"
+            }`}
+          >
+            {msg}
+          </motion.p>
+        )}
       <section>
         <h2>Thank you so much for your order!</h2>
         <p>We really appreciate it. </p>
-        <p>
-          Enjoy <b>10%</b> off your next purchase with this coupon code:
-          <b>THANKYOU10.</b>
-        </p>
       </section>
       <div className={classes.actions}>
         <button
