@@ -12,11 +12,7 @@ import { AnimatePresence } from "framer-motion";
 
 ReactDOM.render(
   <AnimatePresence mode="wait">
-    <Router>
-      <StateProvider initialState={defaultCartState} reducer={reducer}>
         <App />
-      </StateProvider>
-    </Router>{" "}
   </AnimatePresence>,
   document.getElementById("root")
 );

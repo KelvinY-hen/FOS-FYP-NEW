@@ -1,5 +1,13 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import Header from "./Header";
+import Cart from "./cart/Cart";
 import Menu from "./food/Menu";
 import CreateFood from "./food/CRUD/CreateFood";
 import UpdateFood from "./food/CRUD/UpdateFood";
@@ -29,27 +37,47 @@ const ScrollToTop = () => {
 };
 
 const AppRoutes = () => {
+  const [cartIsShown, setCartIsShown] = useState(false);
+
+  const showCartHandler = () => {
+    setCartIsShown(true);
+  };
+
+  const hideCartHandler = () => {
+    setCartIsShown(false);
+  };
   return (
-    <Routes>
+    <Router>
       <ScrollToTop />
-      <Route path="/*" element={<Home />} />
-      <Route path="/User/Edit" element={<UpdateUser />} />
-      <Route path="/Restaurant/Create" element={<CreateRestaurant />} />
-      <Route path="/Restaurant/:id" element={<Menu />} />
-      <Route path="/Restaurant/Edit/:id" element={<UpdateRestaurant />} />
-      <Route path="/Restaurant/Order" element={<OrdersList />} />
-      <Route path="/Restaurant/Order/:id" element={<DetailedOrder />} />
-      <Route path="/Order" element={<UserOrdersList />} />
-      <Route path="/Order/:id" element={<UserDetailedOrder />} />
-      <Route path="/Categories/Create" element={<CreateCategory />} />
-      <Route path="/Categories/:id" element={<UpdateCategory />} />
-      <Route path="/Food/Create" element={<CreateFood />} />
-      <Route path="/Food/:id" element={<UpdateFood />} />
-      <Route path="/Food/:id/Ingredient" element={<CreateFoodIngredient />} />
-      <Route path="/Ingredient" element={<Warehouse />} />
-      <Route path="/Ingredient/Create" element={<CreateIngredient />} />
-      <Route path="/Ingredient/Edit/:id" element={<UpdateIngredient />} />
-    </Routes>
+      {cartIsShown && <Cart onClose={hideCartHandler} />}
+      <div className="w-screen h-auto flex flex-col bg-gray-100">
+        <Header onShowCart={showCartHandler} onClose={hideCartHandler} />
+        <main className="mt-16 md:mt-20 p-8 w-full">
+          <Routes>
+            <Route path="/*" element={<Home />} />
+            <Route path="/User/Edit" element={<UpdateUser />} />
+            <Route path="/Restaurant/Create" element={<CreateRestaurant />} />
+            <Route path="/Restaurant/:id" element={<Menu />} />
+            <Route path="/Restaurant/Edit/:id" element={<UpdateRestaurant />} />
+            <Route path="/Restaurant/Order" element={<OrdersList />} />
+            <Route path="/Restaurant/Order/:id" element={<DetailedOrder />} />
+            <Route path="/Order" element={<UserOrdersList />} />
+            <Route path="/Order/:id" element={<UserDetailedOrder />} />
+            <Route path="/Categories/Create" element={<CreateCategory />} />
+            <Route path="/Categories/:id" element={<UpdateCategory />} />
+            <Route path="/Food/Create" element={<CreateFood />} />
+            <Route path="/Food/:id" element={<UpdateFood />} />
+            <Route
+              path="/Food/:id/Ingredient"
+              element={<CreateFoodIngredient />}
+            />
+            <Route path="/Ingredient" element={<Warehouse />} />
+            <Route path="/Ingredient/Create" element={<CreateIngredient />} />
+            <Route path="/Ingredient/Edit/:id" element={<UpdateIngredient />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 };
 export default AppRoutes;

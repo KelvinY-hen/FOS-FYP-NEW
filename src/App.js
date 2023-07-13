@@ -29,14 +29,14 @@ const App = () => {
     return (
       <Authenticator>
         <ContextProvider>
-          {cartIsShown && <Cart onClose={hideCartHandler} />}
+          {/* {cartIsShown && <Cart onClose={hideCartHandler} />} */}
           <AnimatePresence mode="wait">
-            <div className="w-screen h-auto flex flex-col bg-gray-100">
+            {/* <div className="w-screen h-auto flex flex-col bg-gray-100">
               <Header onShowCart={showCartHandler} onClose={hideCartHandler} />
-              <main className="mt-16 md:mt-20 p-8 w-full">
-                  <AppRoutes />
-              </main>
-            </div>
+              <main className="mt-16 md:mt-20 p-8 w-full"> */}
+            <AppRoutes />
+            {/* </main>
+            </div> */}
           </AnimatePresence>
         </ContextProvider>
       </Authenticator>
