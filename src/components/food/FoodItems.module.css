@@ -4,7 +4,7 @@
   margin: 1rem;
   padding: 1rem;
   border-bottom: 1px solid #ccc;
-  
+
 }
 
 .food h3 {
@@ -13,6 +13,7 @@
 
 .description {
   font-style: italic;
+  display: flex;
 }
 
 .price {
@@ -23,11 +24,19 @@
 }
 
 @media only screen and (max-width: 768px) {
+  .food h3 {
+    font-size: 1rem;
+  }
+
   .price {
   margin-top: 0.25rem;
   font-weight: bold;
   color: #fb923c;
   font-size: 0.75rem;
+  }
+
+  .description{
+    display: none;
   }
 }
 

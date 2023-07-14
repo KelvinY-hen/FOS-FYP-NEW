@@ -52,7 +52,7 @@ const AppRoutes = () => {
       {cartIsShown && <Cart onClose={hideCartHandler} />}
       <div className="w-screen h-auto flex flex-col bg-gray-100">
         <Header onShowCart={showCartHandler} onClose={hideCartHandler} />
-        <main className="mt-16 md:mt-20 p-8 w-full">
+        <main className="mt-16 md:mt-20 md:p-8 p-4 w-full">
           <Routes>
             <Route path="/*" element={<Home />} />
             <Route path="/User/Edit" element={<UpdateUser />} />

@@ -96,8 +96,7 @@ const Cart = (props) => {
   return (
     <Modal onClose={props.onClose}>
       {!showOrder ? (
-        <>
-          
+        <div className="max-fit-screen overflow-y-auto">
           {cartItems}
           <div className={classes.total}>
             <span>Total Price</span>
@@ -156,7 +155,7 @@ const Cart = (props) => {
               required
               value={basketContext.orderNote}
               onChange={(e) => basketContext.setOrderNote(e.target.value)}
-              placeholder="Give me a description"
+              placeholder="Leave a Note"
               className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-orange-400 text-textColor"
             />
           </div>
@@ -170,7 +169,7 @@ const Cart = (props) => {
               </button>
             )}
           </div>
-        </>
+        </div>
       ) : !basketContext.cashPayment ? (
         <PaymentStripe onClose={props.onClose} />
       ) : (

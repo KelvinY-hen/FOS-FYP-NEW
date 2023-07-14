@@ -92,22 +92,22 @@ const AvailableFoods = () => {
               hide={food.hide}
             />
             {owner && (
-              <div className="flex gap-2 pb-2 pl-2">
+              <div className="flex gap-2 pb-2 pl-2 justify-between pr-2 md:pr-0">
                 <button
                   type="button"
-                  className=" w-[25%] border-none outline-none bg-orange-500 p-1 rounded-lg text-lg text-white font-semibold"
+                  className=" w-[50%] md:w-[25%] border-none outline-none bg-orange-500 p-1 rounded-lg text-lg text-white font-semibold"
                   onClick={() => navigate(`/Food/${food.id} `)}
                 >
                   Edit
                 </button>
                 <button
                   type="button"
-                  className="w-[25%]  border-none outline-none bg-sky-700 p-1 rounded-lg text-lg text-white font-semibold"
+                  className=" w-[50%] md:w-[25%]  border-none outline-none bg-sky-700 p-1 rounded-lg text-lg text-white font-semibold"
                   onClick={() => navigate(`/Food/${food.id}/Ingredient`)}
                 >
                   ingredient
                 </button>
-                <p className="ml-auto pr-1 md:pr-7">
+                <p className="ml-auto pr-1 md:pr-7 md:flex hidden">
                   Last updated on: {formattedDate}, {formattedTime}{" "}
                 </p>
               </div>

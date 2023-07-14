@@ -52,7 +52,7 @@ const FoodItems = (props) => {
       <div className="flex gap-2">
         <div>
           {props.image && (
-            <img src={foodImage} alt={props.name} className=" w-32 h-32" />
+            <img src={foodImage} alt={props.name} className=" w-32 md:h-32 hidden md:flex " />
           )}
         </div>
         <div>
