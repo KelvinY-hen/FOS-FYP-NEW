@@ -20,7 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function UpdateFood() {
   const { id } = useParams();
 
-  const { cartContext } = useCTX();
+  const { cartContext, restaurant } = useCTX();
   const navigation = useNavigate();
   const [Food, setFood] = useState(null);
 
@@ -39,11 +39,17 @@ function UpdateFood() {
   const [oldFoodImage, setOldFoodImage] = useState({ file: null, url: "" });
   const [hide, setHide] = useState(true);
 
-  useEffect(() => {
-    DataStore.query(Categories).then(setCategories);
-  }, []);
+  // useEffect(() => {
+  //   DataStore.query(Categories).then(setCategories);
+  // }, []);
 
   useEffect(() => {
+    if (!restaurant) {
+      return;
+    }
+    DataStore.query(Categories, (c) => c?.restaurantID.eq(restaurant.id)).then(
+      setCategories
+    );
     DataStore.query(Foods, id).then(setFood);
   }, [id, Foods]);
 
@@ -193,7 +199,7 @@ function UpdateFood() {
               value={category}
               className="outline-none w-full text-base border-b-2 border-orange-200 text-orange-400 bg-transparent  p-2 rounded-md cursor-pointer"
             >
-              <option value="other" className="bg-white">
+              <option value="" className="bg-white">
                 Select Category
               </option>
               {categories &&
