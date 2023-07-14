@@ -135,10 +135,12 @@ const ContextProvider = (props) => {
   const addDishToBasket = async (food, quantity) => {
     // get the existing basket or create a new one
     let theBasket = basket || (await createNewBasket());
+
+    /// filter to find food with the same id and the same cart with user active cart
     await DataStore.query(CartFood, (cf) =>
       cf.and((cf) => [cf?.foodID.eq(food.id), cf.cartID.eq(basket.id)])
     ).then(async (cf) => {
-      if (cf.length > 0) {
+      if (cf.length > 0) { /// if data is found
         console.log(cf);
         const existingCartFood = cf[0];
         const newQuantity = existingCartFood.quantity + quantity;
@@ -160,10 +162,11 @@ const ContextProvider = (props) => {
         });
         console.log(basketDishes)
         setBasketDishes(updatedBasketDishes);
-      } else {
+      } else {/// if data is not found then add new food to the cart
         const newDish = await DataStore.save(
           new CartFood({ quantity, foodID: food.id, cartID: theBasket.id })
         );
+        console.log(newDish)
         setBasketDishes([...basketDishes, newDish]);
       }
       // If dish.id was not found in the cart, create a new BasketDish item and save it to DataStore
@@ -181,6 +184,9 @@ const ContextProvider = (props) => {
       if (cf[0].quantity > 1) {
         const existingCartFood = cf[0];
         const newQuantity = existingCartFood.quantity - 1;
+        console.log("peler kurang")
+        console.log(newQuantity)
+        console.log(existingCartFood)
 
         // Update the quantity of the existing CartFood item
         await DataStore.save(
