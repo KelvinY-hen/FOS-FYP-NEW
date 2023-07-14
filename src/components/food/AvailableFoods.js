@@ -45,13 +45,6 @@ const AvailableFoods = () => {
     basketContext.setRestaurantBasket(thisRestaurant);
   }, [thisRestaurant]);
 
-  // useEffect(() => {
-  //   DataStore.query(Foods).then(setFood);
-  // }, [])
-
-  // useEffect(() => {
-  //   DataStore.query(Categories).then(setCategory);
-  // }, [])
   const modifyFood = (category) => {
     owner && navigate(`/Categories/${category.id} `);
   };

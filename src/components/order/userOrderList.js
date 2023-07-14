@@ -101,6 +101,7 @@ const UserOrdersList = () => {
       title: "Created at",
       dataIndex: "createdAt",
       key: "createdAt",
+      responsive: ["sm"],
       render: (dt) => new Date(dt).toLocaleString(),
       sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
     },
@@ -108,12 +109,14 @@ const UserOrdersList = () => {
       title: "Ordered for",
       dataIndex: "DateTime",
       key: "DateTime",
+      responsive: ["sm"],
       render: (dt) => new Date(dt).toLocaleString(),
     },
     {
       title: "Price",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      responsive: ["sm"],
       render: (price) => `${price.toFixed(2)} $`,
     },
     {

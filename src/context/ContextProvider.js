@@ -136,7 +136,7 @@ const ContextProvider = (props) => {
     // get the existing basket or create a new one
     let theBasket = basket || (await createNewBasket());
     await DataStore.query(CartFood, (cf) =>
-      cf.and((cf) => [cf.foodID?.eq(food.id), cf.cartID.eq(basket.id)])
+      cf.and((cf) => [cf?.foodID.eq(food.id), cf.cartID.eq(basket.id)])
     ).then(async (cf) => {
       if (cf.length > 0) {
         console.log(cf);
@@ -150,18 +150,21 @@ const ContextProvider = (props) => {
           })
         );
 
+        console.log(basketDishes)
+
         const updatedBasketDishes = basketDishes.map((basketDish) => {
           if (basketDish.foodID === food.id) {
             return { ...basketDish, quantity: newQuantity };
           }
           return basketDish;
         });
+        console.log(basketDishes)
         setBasketDishes(updatedBasketDishes);
       } else {
         const newDish = await DataStore.save(
           new CartFood({ quantity, foodID: food.id, cartID: theBasket.id })
         );
-        setBasketDishes([newDish]);
+        setBasketDishes([...basketDishes, newDish]);
       }
       // If dish.id was not found in the cart, create a new BasketDish item and save it to DataStore
     });

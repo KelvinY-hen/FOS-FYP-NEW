@@ -118,7 +118,7 @@ const Cart = (props) => {
             />
           </div>
           {!basketContext.dineIn ? (
-            <div>
+            <div className="flex gap-2">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <p className="mb-3">Enter your Pickup Time:</p>
                 <DateTimePicker
@@ -129,7 +129,7 @@ const Cart = (props) => {
               </LocalizationProvider>
             </div>
           ) : (
-            <div>
+            <div className="flex gap-2">
               <p>Enter your Table number:</p>
               <input
                 className=" border border-solid border-1 border-gray-200 text-center"
@@ -149,7 +149,7 @@ const Cart = (props) => {
               )}
             </div>
           )}
-          <div className="w-full py-10 border-b border-orange-300 flex items-center gap-2">
+          <div className="w-full py-5 flex items-center gap-2">
             <MdAbc className=" text-3xl text-orange-700" />
             <input
               type="text"
