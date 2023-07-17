@@ -71,8 +71,11 @@ const DetailedOrder = () => {
     try {
       const [ingredients, foodIngredients] = await Promise.all([
         DataStore.query(Ingredient, (I) => I.restaurantID.eq(order?.restaurantID)),
-        DataStore.query(FoodIngredient, (FI) => FI.restaurantID.eq(order?.restaurantID)),
+        DataStore.query(FoodIngredient),
       ]);
+
+      console.log(ingredients)
+      console.log(foodIngredients)
 
       for (const item of dishes) {
 
@@ -89,6 +92,8 @@ const DetailedOrder = () => {
             (ing) => ing.id === foodIngredientItem.ingredientID
           );
 
+          console.log(ingredientItem)
+
           if (!ingredientItem) {
             continue;
           }
@@ -96,6 +101,8 @@ const DetailedOrder = () => {
           const newQuantity =
             ingredientItem.quantity -
             foodIngredientItem.recipeQuantity * item.quantity;
+
+            console.log(newQuantity)
 
           await DataStore.save(
             Ingredient.copyOf(ingredientItem, (updated) => {
