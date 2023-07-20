@@ -111,7 +111,8 @@ function CreateFood() {
         setAlertStatus("success");
         setTimeout(() => {
           setFields(false);
-        }, 4000);
+          navigation(`/Restaurant/${restaurant.id} `)
+        }, 1000);
       }
     } catch (error) {
       console.log(error);

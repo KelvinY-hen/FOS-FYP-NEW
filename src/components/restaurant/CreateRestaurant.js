@@ -67,6 +67,7 @@ function CreateRestaurant() {
         setMsg("Data Uploaded successfully 😊");
         setAlertStatus("success");
         setTimeout(() => {
+          navigation("/");
           setFields(false);
         }, 4000);
       }

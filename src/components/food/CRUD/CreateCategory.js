@@ -69,6 +69,7 @@ function CreateCategory() {
         setAlertStatus("success");
         setTimeout(() => {
           setFields(false);
+          navigation(`/Restaurant/${restaurant.id}`)
         }, 4000);
       }
     } catch (error) {

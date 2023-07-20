@@ -68,7 +68,8 @@ function UpdateIngredient() {
         setAlertStatus("success");
         setTimeout(() => {
           setFields(false);
-        }, 4000);
+          navigation("/Ingredient")
+        }, 1000);
       }
     } catch (error) {
       console.log(error);

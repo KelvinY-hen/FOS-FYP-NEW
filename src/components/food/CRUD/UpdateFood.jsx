@@ -120,7 +120,8 @@ function UpdateFood() {
         setAlertStatus("success");
         setTimeout(() => {
           setFields(false);
-        }, 4000);
+          navigation(`/Restaurant/${restaurant.id} `)
+        }, 1000);
       }
     } catch (error) {
       console.log(error);
@@ -145,7 +146,8 @@ function UpdateFood() {
     setAlertStatus("success");
     setTimeout(() => {
       setFields(false);
-    }, 4000);
+      navigation(`/Restaurant/${restaurant.id} `)
+    }, 1000);
   };
 
   function addImage(e) {

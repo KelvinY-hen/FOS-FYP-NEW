@@ -61,8 +61,9 @@ function CreateIngredient() {
         setMsg("Data Uploaded successfully 😊");
         setAlertStatus("success");
         setTimeout(() => {
+          navigation("/Ingredient")
           setFields(false);
-        }, 4000);
+        }, 1000);
       }
     } catch (error) {
       console.log(error);

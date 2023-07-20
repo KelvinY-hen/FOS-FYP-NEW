@@ -57,8 +57,9 @@ const AvailableFoods = () => {
     setMsg("Data Deleted Succesfully");
     setAlertStatus("success");
     setTimeout(() => {
-      setFields(false);
-    }, 4000);
+      
+      navigate(`/Restaurant/${restaurant.id}`)
+    }, 1000);
   };
 
   const [filter, setFilter] = useState("Meat");
