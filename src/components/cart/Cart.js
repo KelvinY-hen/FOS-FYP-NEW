@@ -66,7 +66,6 @@ const Cart = (props) => {
       setAmountIsValid(false);
       return;
     } else {
-      await basketContext.createOrder();
       setShowOrder(true);
     }
   };

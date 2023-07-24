@@ -79,7 +79,6 @@ const PaymentForm = (props) => {
 
         if (response.data.success) {
           console.log("succesful payment");
-          await basketContext.createOrder();
           succesSet();
         }
       } catch (error) {

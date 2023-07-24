@@ -24,6 +24,7 @@ const OrderDelivered = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+
         const [ingredients, foodIngredients] = await Promise.all([
           DataStore.query(Ingredient),
           DataStore.query(FoodIngredient),
@@ -63,6 +64,9 @@ const OrderDelivered = (props) => {
         console.error("Error fetching data:", error);
       }
     };
+    const confirmOrder = async () => {
+      await basketContext.createOrder();
+    }
     // const handleAction = async () => {
     //   console.log("didalam");
     //   console.log(foodIngredientList)
@@ -106,6 +110,7 @@ const OrderDelivered = (props) => {
     // };
     // fetchData();
     // handleAction();
+    confirmOrder();
   }, [restaurant]);
 
   // const onCreateOrder = async () => {
