@@ -42,15 +42,16 @@ function Home() {
     );
   });
 
+
   return (
     <motion.div
       initial={{ opacity: 0, translateY:15}}
       animate={{ opacity: 1, translateY:0}}
       exit={{ opacity: 0, translateY:15}}
       transition={{ duration: 1 }}
-      className="w-full min-h-screen"
+      className="w-full min-h-screen p-4"
     >
-      {restaurants}
+      <h1 className=" font-bold text-center">{restaurants}</h1>
     </motion.div>
   );
 }

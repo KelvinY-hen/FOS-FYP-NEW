@@ -25,6 +25,7 @@ import DetailedOrder from "./order/orderDetail";
 import UserOrdersList from "./order/userOrderList";
 import UserDetailedOrder from "./order/userOrderDetail";
 import UpdateUser from "./user/UpdateUser";
+import Footer from "./Footer";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -76,6 +77,13 @@ const AppRoutes = () => {
             <Route path="/Ingredient/Edit/:id" element={<UpdateIngredient />} />
           </Routes>
         </main>
+        <Footer/>
+        <div className="bg-white p-0.5">
+
+        </div>
+        <div className=" bg-orange-600 items-center ">
+          <p className="text-center p-4">Copyright ©2023, Designed by Kelvin Yeliandi</p>
+        </div>
       </div>
     </Router>
   );

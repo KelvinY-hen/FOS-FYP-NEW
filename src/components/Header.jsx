@@ -11,6 +11,7 @@ import { useCTX } from "../context/Context";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "aws-amplify";
 import { motion } from "framer-motion";
+import logo from "../image/fork.png";
 
 const Header = (props) => {
   const { cartContext, restaurant, basketContext } = useCTX();
@@ -44,13 +45,19 @@ const Header = (props) => {
   };
 
   return (
-    <header className="fixed z-50 w-screen p-7 px-4 md:p-5 md:px-16 bg-orange-400  border-radius:6px">
+    <header className="fixed z-50 w-screen p-7 px-4 md:p-0  bg-orange-400  border-radius:6px">
       {/*desktop*/}
-      <div className="hidden md:flex w-full h-full p-4">
-        <div className="flex items-center gap-2"></div>
+
+      <div className="hidden md:flex w-full h-full p-4 px-12">
+        <motion.img
+          initial={{ opacity: 0, x: 200 }}
+          animate={{ opacity: 1, x: 0 }}
+          src={logo}
+          onClick={() => NavigatePages("/")}
+          className="w-[4%] cursor-pointer"
+        />
 
         <div className="flex items-center gap-8 ml-auto  ">
-          <ul className="flex items-center gap-8 opacity-100"></ul>
 
           <motion.ul
             initial={{ opacity: 0, x: 200 }}
@@ -58,14 +65,6 @@ const Header = (props) => {
             exit={{ opacity: 0, x: 200 }}
             className="flex items-center gap-8 "
           >
-            <motion.li
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.5 }}
-              className="text-base hover:text-black text-gray-500 duration-100 transition-all ease-in-out cursor-pointer"
-              onClick={() => NavigatePages("/")}
-            >
-              Home
-            </motion.li>
             {restaurant && (
               <>
                 <motion.li
